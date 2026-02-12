@@ -27309,7 +27309,7 @@ metadata:
 spec:
   description: project for cl-infrasam-prod
   sourceRepos:
-    - git@github.com:infrasam/kubernetes-argocd-helm-helmfile-lab.git
+    - https://github.com/infrasam/kubernetes-argocd-helm-helmfile-lab.git
   destinations:
     - namespace: '*'
       server: https://192.168.1.20:6443
@@ -27326,7 +27326,7 @@ metadata:
 spec:
   description: project for cl-infrasam-test
   sourceRepos:
-    - git@github.com:infrasam/kubernetes-argocd-helm-helmfile-lab.git
+    - https://github.com/infrasam/kubernetes-argocd-helm-helmfile-lab.git
   destinations:
     - namespace: '*'
       server: https://192.168.1.21:6443
@@ -27343,7 +27343,7 @@ metadata:
 spec:
   description: project for cl-infrasam-dev
   sourceRepos:
-    - git@github.com:infrasam/kubernetes-argocd-helm-helmfile-lab.git
+    - https://github.com/infrasam/kubernetes-argocd-helm-helmfile-lab.git
   destinations:
     - namespace: '*'
       server: https://192.168.1.22:6443
