@@ -1,0 +1,16 @@
+---
+{{- $envValuesDir := print (regexReplaceAll "/releases/[^/]+$" (env "PWD") "") "/bases/environments" }}
+
+environments:
+  cl-infrasam-prod:
+    kubeContext: cl-infrasam-prod
+    values:
+      - {{ $envValuesDir }}/cl-infrasam-prod.yaml.gotmpl
+  cl-infrasam-test:
+    kubeContext: cl-infrasam-test
+    values:
+      -  {{ $envValuesDir }}/cl-infrasam-test.yaml.gotmpl
+  cl-infrasam-dev:
+    kubeContext: cl-infrasam-dev
+    values:
+      -  {{ $envValuesDir }}/cl-infrasam-dev.yaml.gotmpl

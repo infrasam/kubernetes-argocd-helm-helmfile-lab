@@ -1,0 +1,35 @@
+---
+projects:
+  cl-infrasam-prod:
+    namespace: argocd
+    description: "project for cl-infrasam-prod"
+    sourceRepos: git@github.com:infrasam/kubernetes-argocd-helm-helmfile-lab.git
+      - 
+    destinations:
+      - server: 'https://192.168.1.20:6443'
+        namespace: '*'
+    clusterResourceWhitelist:
+      - group: '*'
+        kind: '*'
+  cl-infrasam-test:
+    namespace: argocd
+    description: "project for cl-infrasam-test"
+    sourceRepos: git@github.com:infrasam/kubernetes-argocd-helm-helmfile-lab.git
+      - 
+    destinations:
+      - server: 'https://192.168.1.21:6443'
+        namespace: '*'
+    clusterResourceWhitelist:
+      - group: '*'
+        kind: '*'
+  cl-infrasam-dev:
+    namespace: argocd
+    description: "project for cl-infrasam-dev"
+    sourceRepos: git@github.com:infrasam/kubernetes-argocd-helm-helmfile-lab.git
+      - 
+    destinations:
+      - server: 'https://192.168.1.22:6443'
+        namespace: '*'
+    clusterResourceWhitelist:
+      - group: '*'
+        kind: '*'

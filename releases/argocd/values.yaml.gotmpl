@@ -1,0 +1,78 @@
+---
+global:
+  domain: argocd.k8slabs.se
+
+configs:
+  params:
+    server.insecure: true
+    controller.diff.server.side: "true"
+    controller.log.level: "warn"
+    server.log.level: "warn"
+    reposerver.log.level: "warn"
+    applicationsetcontroller.log.level: "warn"
+    notificationscontroller.log.level: "warn"
+  ssh:
+    knownHosts: |
+
+  cm:
+    create: true
+    admin.enabled: "true"
+    statusbadge.enabled: true
+    url: https://argocd.holmen.work
+    dex.config: |
+    resource.customizations: |
+      storage.k8s.io/CSIDriver:
+        ignoreDifferences: |
+           jqPathExpressions:
+            - .spec.seLinuxMount
+      PersistentVolume:
+          ignoreDifferences: |
+             jsonPointers:
+             - /spec/claimRef/resourceVersion
+             - /spec/claimRef/uid
+             - /status/lastPhaseTransitionTime
+      StatefulSet:
+          ignoreDifferences: |
+             jsonPointers:
+             - /spec/volumeClaimTemplates/0/apiVersion
+             - /spec/volumeClaimTemplates/0/kind
+      apiextensions.k8s.io/CustomResourceDefinition:
+          ignoreDifferences: |
+             jsonPointers:
+             - /status
+             - /spec/conversion/webhook/clientConfig/service
+             - /spec/conversion/webhook/clientConfig/caBundle
+             - /spec/validation/openAPIV3Schema/properties/spec/properties/solver/properties/dns01/properties/webhook/properties/config/x-kubernetes-preserve-unknown-fields
+             - /spec/validation/openAPIV3Schema/properties/spec/properties/acme/properties/solvers/items/properties/dns01/properties/webhook/properties/config/x-kubernetes-preserve-unknown-fields
+      admissionregistration.k8s.io/ValidatingWebhookConfiguration:
+          ignoreDifferences: |
+             jsonPointers:
+             - /webhooks/0/clientConfig/caBundle
+             - /webhooks/0/failurePolicy
+             - /webhooks/1/clientConfig/caBundle
+             - /webhooks/1/failurePolicy
+      admissionregistration.k8s.io/MutatingWebhookConfiguration:
+          ignoreDifferences: |
+             jsonPointers:
+             - /webhooks/0/clientConfig/caBundle
+
+  rbac:
+    create: true
+    policy.default: role:admin
+
+dex:
+  servicePortHttpName: https
+
+server:
+  ingress:
+    enabled: true
+    annotations:
+      cert-manager.io/cluster-issuer: cloudflare
+      ingress.kubernetes.io/force-ssl-redirect: "true"
+    ingressClassName: "contour"
+    hostname: "argocd.k8slabs.se"
+    path: /
+    tls: true
+
+  service:
+    type: LoadBalancer

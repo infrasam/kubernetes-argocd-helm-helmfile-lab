@@ -1,0 +1,108 @@
+---  
+cl-infrasam-prod:
+  namespace: argocd
+  generators:
+  - git:
+      repoURL: git@github.com:infrasam/kubernetes-argocd-helm-helmfile-lab.git
+      revision: HEAD
+      directories:
+        - path: generated/cl-infrasam-prod/*
+  syncPolicy:
+    applicationsSync: create-update
+  template:
+    metadata:
+      name: '{{`{{path.basenameNormalized}}-{{path[1]}}`}}'
+      labels:
+        argocd.application: "{{`{{path[2]}}`}}"
+        argocd.environment: "{{`{{path[1]}}`}}"
+        annotations:
+          argocd.argoproj.io/compare-options: IncludeMutationWebhook=true
+    spec:
+      project: "cl-infrasam-prod"
+      source:
+        repoURL: git@github.com:infrasam/kubernetes-argocd-helm-helmfile-lab.git
+        targetRevision: HEAD
+        path: '{{`{{path}}`}}'
+        directory:
+          include: manifest.lock.yaml
+      destination:
+        name: cl-infrasam-prod
+        namespace: '{{`{{path.basenameNormalized}}`}}'
+      syncPolicy:
+        automated:
+          enabled: false
+        syncOptions:
+          - CreateNamespace=true
+          - ServerSideApply=true
+
+cl-infrasam-test:
+  namespace: argocd
+  generators:
+  - git:
+      repoURL: git@github.com:infrasam/kubernetes-argocd-helm-helmfile-lab.git
+      revision: test
+      directories:
+        - path: generated/cl-infrasam-test/*
+  syncPolicy:
+    applicationsSync: create-update
+  template:
+    metadata:
+      name: '{{`{{path.basenameNormalized}}-{{path[1]}}`}}'
+      labels:
+        argocd.application: "{{`{{path[2]}}`}}"
+        argocd.environment: "{{`{{path[1]}}`}}"
+        annotations:
+          argocd.argoproj.io/compare-options: IncludeMutationWebhook=true
+    spec:
+      project: "cl-infrasam-test"
+      source:
+        repoURL: git@github.com:infrasam/kubernetes-argocd-helm-helmfile-lab.git
+        targetRevision: test
+        path: '{{`{{path}}`}}'
+        directory:
+          include: manifest.lock.yaml
+      destination:
+        name: cl-infrasam-test
+        namespace: '{{`{{path.basenameNormalized}}`}}'
+      syncPolicy:
+        automated:
+          enabled: false
+        syncOptions:
+          - CreateNamespace=true
+          - ServerSideApply=true
+
+cl-infrasam-dev:
+  namespace: argocd
+  generators:
+      repoURL: git@github.com:infrasam/kubernetes-argocd-helm-helmfile-lab.git
+      revision: dev
+      directories:
+        - path: generated/cl-infrasam-dev/*
+  syncPolicy:
+    applicationsSync: create-update
+  template:
+    metadata:
+      name: '{{`{{path.basenameNormalized}}-{{path[1]}}`}}'
+      labels:
+        argocd.application: "{{`{{path[2]}}`}}"
+        argocd.environment: "{{`{{path[1]}}`}}"
+        annotations:
+          argocd.argoproj.io/compare-options: IncludeMutationWebhook=true
+    spec:
+      project: "cl-infrasam-dev"
+      source:
+        repoURL: git@github.com:infrasam/kubernetes-argocd-helm-helmfile-lab.git
+        targetRevision: HEAD
+        path: '{{`{{path}}`}}'
+        directory:
+          include: manifest.lock.yaml
+      destination:
+        name: cl-infrasam-dev
+        namespace: '{{`{{path.basenameNormalized}}`}}'
+      syncPolicy:
+        automated:
+          enabled: false
+        syncOptions:
+          - CreateNamespace=true
+          - ServerSideApply=true
+

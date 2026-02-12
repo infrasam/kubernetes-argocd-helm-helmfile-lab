@@ -1,0 +1,34 @@
+---
+bases:
+  - ../../bases/helmDefaults.yaml.gotmpl
+  - ../../bases/environments.yaml.gotmpl
+  - ../../bases/apiVersions.yaml.gotmpl
+
+---
+repositories:
+  - name: argo
+    url: https://argoproj.github.io/argo-helm
+
+releases:
+  - name: argocd
+    chart: argo/argo-cd
+    namespace: argocd
+    version: {{ .Values | get "argocd.chart_version" nil }}
+    installed: {{ .Values | get "argocd.installed" false }}
+    labels:
+      tier: inf
+    values:
+      - values.yaml.gotmpl
+
+  - name: argocd-apps
+    chart: argo/argocd-apps
+    namespace: argocd
+    installed: {{ .Values | get "argocd.installed" false }}
+    version: {{ .Values | get "argocd_apps.chart_version" nil }}
+    needs:
+      - argocd/argocd
+    labels:
+      tier: inf
+    values:
+      - argocd-apps/applicationsets.yaml.gotmpl
+      - argocd-apps/projects.yaml.gotmpl
