@@ -4,7 +4,7 @@ cl-infrasam-prod:
   generators:
   - git:
       repoURL: git@github.com:infrasam/kubernetes-argocd-helm-helmfile-lab.git
-      revision: HEAD
+      revision: main
       directories:
         - path: generated/cl-infrasam-prod/*
   syncPolicy:
@@ -21,7 +21,7 @@ cl-infrasam-prod:
       project: "cl-infrasam-prod"
       source:
         repoURL: git@github.com:infrasam/kubernetes-argocd-helm-helmfile-lab.git
-        targetRevision: HEAD
+        targetRevision: main
         path: '{{`{{path}}`}}'
         directory:
           include: manifest.lock.yaml
