@@ -27304,29 +27304,12 @@ spec:
 apiVersion: argoproj.io/v1alpha1
 kind: AppProject
 metadata:
-  name: 
-  namespace: argocd
-spec:
-  description: project for cl-infrasam-dev
-  sourceRepos:
-    git@github.com:infrasam/kubernetes-argocd-helm-helmfile-lab.git -
-  destinations:
-    - namespace: '*'
-      server: https://192.168.1.22:6443
-  clusterResourceWhitelist:
-    - group: '*'
-      kind: '*'
----
-# Source: argocd-apps/templates/projects.yaml
-apiVersion: argoproj.io/v1alpha1
-kind: AppProject
-metadata:
-  name: 
+  name: cl-infrasam-prod
   namespace: argocd
 spec:
   description: project for cl-infrasam-prod
   sourceRepos:
-    git@github.com:infrasam/kubernetes-argocd-helm-helmfile-lab.git -
+    - git@github.com:infrasam/kubernetes-argocd-helm-helmfile-lab.git
   destinations:
     - namespace: '*'
       server: https://192.168.1.20:6443
@@ -27338,15 +27321,32 @@ spec:
 apiVersion: argoproj.io/v1alpha1
 kind: AppProject
 metadata:
-  name: 
+  name: cl-infrasam-test
   namespace: argocd
 spec:
   description: project for cl-infrasam-test
   sourceRepos:
-    git@github.com:infrasam/kubernetes-argocd-helm-helmfile-lab.git -
+    - git@github.com:infrasam/kubernetes-argocd-helm-helmfile-lab.git
   destinations:
     - namespace: '*'
       server: https://192.168.1.21:6443
+  clusterResourceWhitelist:
+    - group: '*'
+      kind: '*'
+---
+# Source: argocd-apps/templates/projects.yaml
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: cl-infrasam-dev
+  namespace: argocd
+spec:
+  description: project for cl-infrasam-dev
+  sourceRepos:
+    - git@github.com:infrasam/kubernetes-argocd-helm-helmfile-lab.git
+  destinations:
+    - namespace: '*'
+      server: https://192.168.1.22:6443
   clusterResourceWhitelist:
     - group: '*'
       kind: '*'

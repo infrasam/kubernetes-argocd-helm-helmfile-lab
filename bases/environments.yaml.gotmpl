@@ -3,14 +3,14 @@
 
 environments:
   cl-infrasam-prod:
-    kubeContext: cl-infrasam-prod
+    kubeContext: default
     values:
       - {{ $envValuesDir }}/cl-infrasam-prod.yaml.gotmpl
   cl-infrasam-test:
-    kubeContext: cl-infrasam-test
+    kubeContext: default
     values:
       -  {{ $envValuesDir }}/cl-infrasam-test.yaml.gotmpl
   cl-infrasam-dev:
-    kubeContext: cl-infrasam-dev
+    kubeContext: default
     values:
       -  {{ $envValuesDir }}/cl-infrasam-dev.yaml.gotmpl
