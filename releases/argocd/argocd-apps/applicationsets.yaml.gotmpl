@@ -3,7 +3,7 @@ cl-infrasam-prod:
   namespace: argocd
   generators:
   - git:
-      repoURL: git@github.com:infrasam/kubernetes-argocd-helm-helmfile-lab.git
+      repoURL: https://github.com/infrasam/kubernetes-argocd-helm-helmfile-lab.git
       revision: main
       directories:
         - path: generated/cl-infrasam-prod/*
@@ -20,7 +20,7 @@ cl-infrasam-prod:
     spec:
       project: "cl-infrasam-prod"
       source:
-        repoURL: git@github.com:infrasam/kubernetes-argocd-helm-helmfile-lab.git
+        repoURL: https://github.com/infrasam/kubernetes-argocd-helm-helmfile-lab.git
         targetRevision: main
         path: '{{`{{path}}`}}'
         directory:
@@ -39,7 +39,7 @@ cl-infrasam-test:
   namespace: argocd
   generators:
   - git:
-      repoURL: git@github.com:infrasam/kubernetes-argocd-helm-helmfile-lab.git
+      repoURL: https://github.com/infrasam/kubernetes-argocd-helm-helmfile-lab.git
       revision: test
       directories:
         - path: generated/cl-infrasam-test/*
@@ -56,7 +56,7 @@ cl-infrasam-test:
     spec:
       project: "cl-infrasam-test"
       source:
-        repoURL: git@github.com:infrasam/kubernetes-argocd-helm-helmfile-lab.git
+        repoURL: https://github.com/infrasam/kubernetes-argocd-helm-helmfile-lab.git
         targetRevision: test
         path: '{{`{{path}}`}}'
         directory:
@@ -74,7 +74,7 @@ cl-infrasam-test:
 cl-infrasam-dev:
   namespace: argocd
   generators:
-      repoURL: git@github.com:infrasam/kubernetes-argocd-helm-helmfile-lab.git
+      repoURL: https://github.com/infrasam/kubernetes-argocd-helm-helmfile-lab.git
       revision: dev
       directories:
         - path: generated/cl-infrasam-dev/*
@@ -91,7 +91,7 @@ cl-infrasam-dev:
     spec:
       project: "cl-infrasam-dev"
       source:
-        repoURL: git@github.com:infrasam/kubernetes-argocd-helm-helmfile-lab.git
+        repoURL: https://github.com/infrasam/kubernetes-argocd-helm-helmfile-lab.git
         targetRevision: HEAD
         path: '{{`{{path}}`}}'
         directory:
