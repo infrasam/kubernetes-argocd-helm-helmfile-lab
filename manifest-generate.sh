@@ -4,7 +4,7 @@ set -euo pipefail
 
 generated_dir="generated"
 base_dir="$(pwd)"
-declare -a envs=("cl-infrasam-prod" "cl-infrasam-test" "cl-infrasam-dev")
+declare -a envs=("cl-infrasam-prod" "cl-infrasam-test")
 echo "Base directory: $base_dir"
 
 cleanup() {
