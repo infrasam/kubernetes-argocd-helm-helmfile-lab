@@ -42,7 +42,7 @@ applicationsets:
     generators:
       - git:
           repoURL: https://github.com/infrasam/kubernetes-argocd-helm-helmfile-lab.git
-          revision: test
+          revision: main
           directories:
             - path: generated/cl-infrasam-test/*
     syncPolicy:
@@ -59,7 +59,7 @@ applicationsets:
         project: cl-infrasam-test
         source:
           repoURL: https://github.com/infrasam/kubernetes-argocd-helm-helmfile-lab.git
-          targetRevision: test
+          targetRevision: main
           path: '{{`{{path}}`}}'
           directory:
             include: manifest.lock.yaml

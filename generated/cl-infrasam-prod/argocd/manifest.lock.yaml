@@ -27388,7 +27388,7 @@ spec:
         directories:
         - path: generated/cl-infrasam-test/*
         repoURL: https://github.com/infrasam/kubernetes-argocd-helm-helmfile-lab.git
-        revision: test
+        revision: main
   syncPolicy:
     applicationsSync: create-update
   template:
@@ -27406,7 +27406,7 @@ spec:
           include: manifest.lock.yaml
         path: '{{path}}'
         repoURL: https://github.com/infrasam/kubernetes-argocd-helm-helmfile-lab.git
-        targetRevision: test
+        targetRevision: main
       destination:
         name: cl-infrasam-test
         namespace: '{{path.basenameNormalized}}'
