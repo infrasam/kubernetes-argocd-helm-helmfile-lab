@@ -1,0 +1,21 @@
+---
+bases:
+  - ../../bases/helmDefaults.yaml
+  - ../../bases/environments.yaml.gotmpl
+  - ../../bases/apiVersions.yaml
+
+---
+repositories:
+  - name: contour
+    url: https://projectcontour.github.io/helm-charts/
+
+releases:
+  - name: contour
+    chart: contour/contour
+    namespace: contour
+    version: {{ .Values | get "contour.chart_version" nil }}
+    installed: {{ .Values | get "contour.installed" false }}
+    labels:
+      tier: inf
+    values:
+      - values.yaml.gotmpl
