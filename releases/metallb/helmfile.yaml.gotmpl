@@ -1,0 +1,30 @@
+---
+bases:
+  - ../../bases/helmDefaults.yaml
+  - ../../bases/environments.yaml.gotmpl
+  - ../../bases/apiVersions.yaml
+
+---
+repositories:
+  - name: metallb
+    url: https://metallb.github.io/metallb
+
+releases:
+  - name: metallb
+    chart: metallb/metallb
+    namespace: metallb
+    version: {{ .Values | get "metallb.chart_version" nil }}
+    installed: {{ .Values | get "metallb.installed" false }}
+    labels:
+      tier: inf
+    values:
+      - values.yaml.gotmpl
+
+  - name: metallb-extras
+    chart: charts/
+    namespace: metallb
+    installed: {{ .Values | get "metallb.installed" false }}
+    labels:
+      tier: inf
+    values:
+      - values.yaml.gotmpl
