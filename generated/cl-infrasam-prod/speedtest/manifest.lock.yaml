@@ -1,0 +1,94 @@
+---
+# Source: speedtest/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: speedtest
+  labels:
+    helm.sh/chart: speedtest-0.1.0
+    app.kubernetes.io/name: speedtest
+    app.kubernetes.io/instance: speedtest
+    app.kubernetes.io/version: "latest"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8080
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    app.kubernetes.io/name: speedtest
+    app.kubernetes.io/instance: speedtest
+---
+# Source: speedtest/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: speedtest
+  labels:
+    helm.sh/chart: speedtest-0.1.0
+    app.kubernetes.io/name: speedtest
+    app.kubernetes.io/instance: speedtest
+    app.kubernetes.io/version: "latest"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: speedtest
+      app.kubernetes.io/instance: speedtest
+  template:
+    metadata:
+      labels:
+        helm.sh/chart: speedtest-0.1.0
+        app.kubernetes.io/name: speedtest
+        app.kubernetes.io/instance: speedtest
+        app.kubernetes.io/version: "latest"
+        app.kubernetes.io/managed-by: Helm
+    spec:
+      containers:
+        - name: speedtest
+          image: "ghcr.io/librespeed/speedtest:latest"
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: TITLE
+              value: "Infrasam Speedtest"
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+---
+# Source: speedtest/templates/ingress.yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: speedtest
+  labels:
+    helm.sh/chart: speedtest-0.1.0
+    app.kubernetes.io/name: speedtest
+    app.kubernetes.io/instance: speedtest
+    app.kubernetes.io/version: "latest"
+    app.kubernetes.io/managed-by: Helm
+  annotations:
+    cert-manager.io/cluster-issuer: cloudflare
+    ingress.kubernetes.io/force-ssl-redirect: true
+    kubernetes.io/ingress.class: contour
+spec:
+  ingressClassName: contour
+  tls:
+    - hosts:
+        - "speedtest.k8slabs.se"
+      secretName: speedtest-tls
+  rules:
+    - host: speedtest.k8slabs.se
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: speedtest
+                port:
+                  number: 8080
+

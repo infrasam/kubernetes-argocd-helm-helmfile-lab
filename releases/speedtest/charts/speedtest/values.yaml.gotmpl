@@ -1,0 +1,32 @@
+replicaCount: 1
+
+image:
+  repository: ghcr.io/librespeed/speedtest
+  pullPolicy: IfNotPresent
+  tag: latest
+
+service:
+  type: ClusterIP
+  port: 8080
+
+ingress:
+  enabled: true
+  className: "contour"
+  annotations:
+    kubernetes.io/ingress.class: contour
+    cert-manager.io/cluster-issuer: cloudflare
+    ingress.kubernetes.io/force-ssl-redirect: true
+
+  hosts:
+    - host: speedtest.k8slabs.se
+      paths:
+        - path: /
+          pathType: Prefix
+
+  tls:
+    - secretName: speedtest-tls
+      hosts:
+        - speedtest.k8slabs.se
+
+app:
+  title: "Infrasam Speedtest"
