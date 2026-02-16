@@ -1,0 +1,17 @@
+---
+bases:
+  - ../../bases/helmDefaults.yaml
+  - ../../bases/environments.yaml.gotmpl
+  - ../../bases/apiVersions.yaml
+
+---
+releases:
+  - name: speedtest
+    chart: charts/speedtest
+    namespace: speedtest
+    version: {{ .Values | get "speedtest.chart_version" nil }}
+    installed: {{ .Values | get "speedtest.installed" false }}
+    labels:
+      tier: inf
+    values:
+      - ./charts/speedtest/values.yaml.gotmpl
