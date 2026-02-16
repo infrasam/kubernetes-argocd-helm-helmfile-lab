@@ -72,7 +72,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
   annotations:
     cert-manager.io/cluster-issuer: cloudflare
-    ingress.kubernetes.io/force-ssl-redirect: true
+    ingress.kubernetes.io/force-ssl-redirect: "true"
     kubernetes.io/ingress.class: contour
 spec:
   ingressClassName: contour
