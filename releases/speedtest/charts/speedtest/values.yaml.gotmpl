@@ -15,7 +15,7 @@ ingress:
   annotations:
     kubernetes.io/ingress.class: contour
     cert-manager.io/cluster-issuer: cloudflare
-    ingress.kubernetes.io/force-ssl-redirect: true
+    ingress.kubernetes.io/force-ssl-redirect: "true"
 
   hosts:
     - host: speedtest.k8slabs.se
