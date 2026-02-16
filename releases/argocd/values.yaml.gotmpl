@@ -18,7 +18,7 @@ configs:
     create: true
     admin.enabled: "true"
     statusbadge.enabled: true
-    url: https://argocd.holmen.work
+    url: https://argocd.k8slabs.se
     dex.config: |
     resource.customizations: |
       storage.k8s.io/CSIDriver:
@@ -68,11 +68,10 @@ server:
     enabled: true
     annotations:
       cert-manager.io/cluster-issuer: cloudflare
-      ingress.kubernetes.io/force-ssl-redirect: "true"
+      ingress.kubernetes.io/force-ssl-redirect: "false"
     ingressClassName: "contour"
-    hostname: "argocd.k8slabs.se"
+    hostname: argocd.k8slabs.se
     path: /
-    tls: true
-
-  service:
-    type: ClusterIP
+  
+service:
+  type: ClusterIP

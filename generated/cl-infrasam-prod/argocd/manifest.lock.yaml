@@ -280,7 +280,7 @@ data:
   statusbadge.url: https://argocd.k8slabs.se/
   timeout.hard.reconciliation: 0s
   timeout.reconciliation: 180s
-  url: https://argocd.holmen.work
+  url: https://argocd.k8slabs.se
 ---
 # Source: argo-cd/templates/argocd-configs/argocd-cmd-params-cm.yaml
 apiVersion: v1
@@ -25655,7 +25655,7 @@ spec:
     metadata:
       annotations:
         checksum/cmd-params: e0f12a0030fd4221691d3c7dce97e606d9123710fca3d3fd79c13bf66d1bfc88
-        checksum/cm: f1fc5076b41f35505cdbd25431ca5f3a4b8d60e6966979f276aef9eb695905fa
+        checksum/cm: 935929468a965893a98261b4acb09bcd447a1b2ff1f4d1249e6782e949239266
       labels:
         helm.sh/chart: argo-cd-8.3.0
         app.kubernetes.io/name: argocd-repo-server
@@ -26052,7 +26052,7 @@ spec:
     metadata:
       annotations:
         checksum/cmd-params: e0f12a0030fd4221691d3c7dce97e606d9123710fca3d3fd79c13bf66d1bfc88
-        checksum/cm: f1fc5076b41f35505cdbd25431ca5f3a4b8d60e6966979f276aef9eb695905fa
+        checksum/cm: 935929468a965893a98261b4acb09bcd447a1b2ff1f4d1249e6782e949239266
       labels:
         helm.sh/chart: argo-cd-8.3.0
         app.kubernetes.io/name: argocd-server
@@ -26756,7 +26756,7 @@ spec:
     metadata:
       annotations:
         checksum/cmd-params: e0f12a0030fd4221691d3c7dce97e606d9123710fca3d3fd79c13bf66d1bfc88
-        checksum/cm: f1fc5076b41f35505cdbd25431ca5f3a4b8d60e6966979f276aef9eb695905fa
+        checksum/cm: 935929468a965893a98261b4acb09bcd447a1b2ff1f4d1249e6782e949239266
       labels:
         helm.sh/chart: argo-cd-8.3.0
         app.kubernetes.io/name: argocd-application-controller
@@ -27139,7 +27139,7 @@ metadata:
     app.kubernetes.io/version: "v3.1.0"
   annotations:
     cert-manager.io/cluster-issuer: "cloudflare"
-    ingress.kubernetes.io/force-ssl-redirect: "true"
+    ingress.kubernetes.io/force-ssl-redirect: "false"
 spec:
   ingressClassName: contour
   rules:
@@ -27153,10 +27153,6 @@ spec:
                 name: argocd-server
                 port:
                   number: 80
-  tls:
-    - hosts:
-      - argocd.k8slabs.se
-      secretName: argocd-server-tls
 ---
 # Source: argo-cd/templates/redis-secret-init/serviceaccount.yaml
 apiVersion: v1
