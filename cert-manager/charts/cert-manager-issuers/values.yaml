@@ -1,8 +1,0 @@
-clusterIssuer:
-  acme:
-    server: https://acme-v02.api.letsencrypt.org/directory
-    email: noreply@k8slabs.se
-    cloudflare:
-      email: nordeply@k8slabs.se
-
-vaultIssuers:
