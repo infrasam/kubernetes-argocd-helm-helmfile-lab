@@ -494,13 +494,14 @@ spec:
       
       affinity:
         podAntiAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            - labelSelector:
-                matchLabels:
-                  app.kubernetes.io/name: vault
-                  app.kubernetes.io/instance: "vault"
-                  component: server
-              topologyKey: kubernetes.io/hostname
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app.kubernetes.io/name: vault
+                    component: server
+                topologyKey: kubernetes.io/hostname
   
       
       
