@@ -1,0 +1,20 @@
+---
+bases:
+  - ../../bases/helmDefaults.yaml
+  - ../../bases/environments.yaml.gotmpl
+  - ../../bases/apiVersions.yaml
+---
+repositories:
+  - name: hashicorp
+    url: https://helm.releases.hashicorp.com
+
+releases:
+  - name: vault
+    chart: hashicorp/vault
+    namespace: vault
+    version: {{ .Values | get "vault.chart_version" nil }}
+    installed: {{ .Values | get "vault.installed" false }}
+    labels:
+      tier: inf
+    values:
+      - values.yaml.gotmpl
