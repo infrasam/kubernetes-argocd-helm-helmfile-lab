@@ -1,4 +1,3 @@
----
 server:
   ha:
     enabled: true
@@ -19,6 +18,17 @@ server:
         }
 
         service_registration "kubernetes" {}
+
+  affinity: |
+    podAntiAffinity:
+      preferredDuringSchedulingIgnoredDuringExecution:
+        - weight: 100
+          podAffinityTerm:
+            labelSelector:
+              matchLabels:
+                app.kubernetes.io/name: vault
+                component: server
+            topologyKey: kubernetes.io/hostname
 
   dataStorage:
     enabled: true
