@@ -47,6 +47,19 @@ server:
     enabled: true
     path: "/v1/sys/health?standbyok=true"
 
+  ingress:
+    enabled: true
+    ingressClassName: "contour"
+    annotations:
+      cert-manager.io/cluster-issuer: cloudflare
+      ingress.kubernetes.io/force-ssl-redirect: "true"
+    hosts:
+      - host: vault.k8slabs.se
+    tls:
+      - secretName: vault-tls
+        hosts:
+          - vault.k8slabs.se
+
 ui:
   enabled: true
   serviceType: ClusterIP
