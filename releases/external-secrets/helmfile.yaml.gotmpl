@@ -1,0 +1,31 @@
+---
+bases:
+  - ../../bases/helmDefaults.yaml
+  - ../../bases/environments.yaml.gotmpl
+  - ../../bases/apiVersions.yaml
+---
+repositories:
+  - name: external-secrets
+    url: https://charts.external-secrets.io
+
+releases:
+  - name: external-secrets
+    chart: external-secrets/external-secrets
+    namespace: external-secrets
+    version: {{ .Values | get "external-secrets.chart_version" nil }}
+    installed: {{ .Values | get "external-secrets.installed" false }}
+    labels:
+      tier: inf
+    values:
+      - values.yaml.gotmpl
+
+  - name: cluster-secret-store
+    chart: ./charts/cluster-secret-store
+    namespace: external-secrets
+    installed: {{ .Values | get "external-secrets.installed" false }}
+    labels:
+      tier: inf
+    needs:
+      - external-secrets/external-secrets
+    values:
+      - values.yaml.gotmpl

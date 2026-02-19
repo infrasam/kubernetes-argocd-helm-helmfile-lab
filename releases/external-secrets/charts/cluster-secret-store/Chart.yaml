@@ -1,0 +1,6 @@
+---
+apiVersion: v2
+name: cluster-secret-store
+description: ClusterSecretStore configuration for HashiCorp Vault
+type: application
+version: 0.1.0
