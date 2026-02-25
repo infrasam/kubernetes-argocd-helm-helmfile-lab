@@ -19,13 +19,11 @@ releases:
     values:
       - values.yaml.gotmpl
 
-  - name: cluster-secret-store
-    chart: ./charts/cluster-secret-store
+  - name: es-clustersecretstore
+    chart: ./charts/es-clustersecretstore
     namespace: external-secrets
     installed: {{ .Values | get "external-secrets.installed" false }}
     labels:
       tier: inf
-    needs:
-      - external-secrets/external-secrets
     values:
-      - values.yaml.gotmpl
+      - "cluster-values/css-{{ .Environment.Name }}.yaml.gotmpl"

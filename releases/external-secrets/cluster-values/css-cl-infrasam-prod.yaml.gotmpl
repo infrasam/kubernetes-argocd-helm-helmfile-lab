@@ -1,0 +1,9 @@
+clusterSecretStores:
+  css-cl-infrasam-prod:
+    server: "http://vault.vault.svc.cluster.local:8200"
+    path: "secret"
+    version: "v2"
+    role: "external-secrets"
+    authMountPath: "kubernetes"
+    serviceAccount: "external-secrets"
+    serviceAccountNamespace: "external-secrets"

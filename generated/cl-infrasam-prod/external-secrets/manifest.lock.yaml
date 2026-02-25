@@ -19650,16 +19650,16 @@ webhooks:
   failurePolicy: Fail
 
 ---
-# Source: cluster-secret-store/templates/clustersecretstore.yaml
+# Source: es-clustersecretstore/templates/clustersecretstore.yaml
 apiVersion: external-secrets.io/v1
 kind: ClusterSecretStore
 metadata:
   name: css-cl-infrasam-prod
   labels:
-    app.kubernetes.io/name: cluster-secret-store
-    app.kubernetes.io/instance: cluster-secret-store
+    app.kubernetes.io/name: es-clustersecretstore
+    app.kubernetes.io/instance: es-clustersecretstore
     app.kubernetes.io/managed-by: Helm
-    helm.sh/chart: cluster-secret-store-0.1.0
+    helm.sh/chart: es-clustersecretstore-0.1.0
 spec:
   provider:
     vault:
