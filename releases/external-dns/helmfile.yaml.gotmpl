@@ -1,0 +1,30 @@
+---
+bases:
+  - ../../bases/helmDefaults.yaml
+  - ../../bases/environments.yaml.gotmpl
+  - ../../bases/apiVersions.yaml
+---
+repositories:
+  - name: external-dns
+    url: https://kubernetes-sigs.github.io/external-dns/
+
+releases:
+  - name: external-dns
+    chart: external-dns/external-dns
+    namespace: external-dns
+    version: {{ .Values | get "external-dns.chart_version" nil }}
+    installed: {{ .Values | get "external-dns.installed" false }}
+    labels:
+      tier: inf
+    values:
+      - values.yaml.gotmpl
+
+  - name: es-secrets
+    chart: ../../charts/es-secrets
+    version: ~0.1
+    namespace: external-dns
+    installed: {{ and (.Values | get "external-dns.installed" false) (.Values | get "external-secrets.installed" false) }}
+    labels:
+      tier: inf
+    values:
+      - secret-values.yaml.gotmpl
