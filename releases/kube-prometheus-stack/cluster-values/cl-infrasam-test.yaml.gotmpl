@@ -1,0 +1,9 @@
+---
+grafana:
+  ingress:
+    hosts:
+      - monitoring.{{ printf "%s.%s" (index (splitList "-" .Environment.Name) 1) (index (splitList "-" .Environment.Name) 2) }}.k8slabs.se
+    tls:
+      - secretName: grafana-tls
+        hosts:
+          - monitoring.{{ printf "%s.%s" (index (splitList "-" .Environment.Name) 1) (index (splitList "-" .Environment.Name) 2) }}.k8slabs.se

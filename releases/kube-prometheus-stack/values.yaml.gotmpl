@@ -1,0 +1,46 @@
+---
+grafana:
+  ingress:
+    enabled: true
+    ingressClassName: contour
+    annotations:
+      kubernetes.io/ingress.class: contour
+      cert-manager.io/cluster-issuer: cloudflare
+      ingress.kubernetes.io/force-ssl-redirect: "true"
+    path: /
+  admin:
+    existingSecret: "grafana-admin"
+
+prometheusOperator:
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 200m
+      memory: 256Mi
+
+prometheus:
+  prometheusSpec:
+    scrapeInterval: 60s # Default is 30s to save resources.
+    scrapeTimeout: 50s
+    evaluationInterval: 60s
+    retention: 10d
+    retentionSize: "15GB"
+    serviceMonitorSelector:
+      matchLabels:
+        release: kube-prometheus-stack
+
+    resources:
+      requests:
+        cpu: 250m
+        memory: 1Gi
+      limits:
+        cpu: 500m
+        memory: 2Gi
+
+kubeEtcd:
+  enabled: false
+
+nodeExporter:
+  enabled: false

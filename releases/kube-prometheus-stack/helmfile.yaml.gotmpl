@@ -1,0 +1,40 @@
+---
+bases:
+  - ../../bases/helmDefaults.yaml
+  - ../../bases/environments.yaml.gotmpl
+  - ../../bases/apiVersions.yaml
+---
+repositories:
+  - name: kube-prometheus-stack
+    url: https://prometheus-community.github.io/helm-charts
+
+releases:
+  - name: kube-prometheus-stack
+    chart: kube-prometheus-stack/kube-prometheus-stack
+    namespace: monitoring
+    version: {{ .Values | get "kube-prometheus-stack.chart_version" nil }}
+    installed: {{ .Values | get "kube-prometheus-stack.installed" false }}
+    labels:
+      tier: inf
+    values:
+      - values.yaml.gotmpl
+      - "cluster-values/{{ .Environment.Name }}.yaml.gotmpl"
+
+  - name: grafana-dashboards
+    chart: ../../charts/grafana-dashboards
+    version: ~0.1
+    namespace: monitoring
+    installed: {{ .Values | get "kube-prometheus-stack.installed" false }}
+    labels:
+      tier: inf
+
+  - name: es-secrets
+    chart: ../../charts/es-secrets
+    version: ~0.1
+    namespace: monitoring
+    installed: {{ and (.Values | get "kube-prometheus-stack.installed" false) ( .Values | get "external-secrets.installed" false) }}
+    labels:
+      tier: inf
+    values:
+      - secret-values.yaml.gotmpl
+

@@ -1,0 +1,9 @@
+---
+grafana:
+  ingress:
+    hosts:
+      - monitoring.k8slabs.se
+    tls:
+      - secretName: grafana-tls
+        hosts:
+          - monitoring.k8slabs.se
