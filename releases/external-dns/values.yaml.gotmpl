@@ -1,0 +1,22 @@
+provider:
+  name: cloudflare
+
+domainFilters:
+  - k8slabs.se
+
+policy: upsert-only
+
+env:
+  - name: CF_API_TOKEN
+    valueFrom:
+      secretKeyRef:
+        name: external-dns-cloudflare
+        key: cloudflare-api-token
+
+resources:
+  requests:
+    cpu: 50m
+    memory: 64Mi
+  limits:
+    cpu: 100m
+    memory: 128Mi
