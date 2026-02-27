@@ -1,0 +1,21 @@
+---
+bases:
+  - ../../bases/helmDefaults.yaml
+  - ../../bases/environments.yaml.gotmpl
+  - ../../bases/apiVersions.yaml
+
+---
+repositories:
+  - name: aqua
+    url: https://aquasecurity.github.io/helm-charts/
+
+releases:
+  - name: trivy-operator
+    chart: aqua/trivy-operator
+    namespace: trivy-operator
+    version: {{ .Values | get "trivy-operator.chart_version" nil }}
+    installed: {{ .Values | get "trivy-operator.installed" false }}
+    labels:
+      tier: inf
+    values:
+      - values.yaml.gotmpl
