@@ -1,0 +1,31 @@
+---
+bases:
+  - ../../bases/helmDefaults.yaml
+  - ../../bases/environments.yaml.gotmpl
+  - ../../bases/apiVersions.yaml
+
+---
+repositories:
+  - name: falcosecurity
+    url: https://falcosecurity.github.io/charts
+
+releases:
+  - name: falco
+    chart: falcosecurity/falco
+    namespace: falco
+    version: {{ .Values | get "falco.chart_version" nil }}
+    installed: {{ .Values | get "falco.installed" false }}
+    labels:
+      tier: inf
+    values:
+      - values.yaml.gotmpl
+
+  - name: es-secrets
+    chart: ../../charts/es-secrets
+    version: ~0.1
+    namespace: falco
+    installed: {{ and (.Values | get "falco.installed" false) (.Values | get "external-secrets.installed" false) }}
+    labels:
+      tier: inf
+    values:
+      - secret-values.yaml.gotmpl
