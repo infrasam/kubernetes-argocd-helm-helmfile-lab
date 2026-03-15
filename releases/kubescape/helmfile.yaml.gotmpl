@@ -1,0 +1,22 @@
+---
+bases:
+  - ../../bases/helmDefaults.yaml
+  - ../../bases/environments.yaml.gotmpl
+  - ../../bases/apiVersions.yaml
+
+---
+repositories:
+  - name: kubescape
+    url: https://kubescape.github.io/helm-charts/
+
+releases:
+  - name: kubescape
+    chart: kubescape/kubescape-operator
+    namespace: kubescape
+    createNamespace: true
+    version: {{ .Values | get "kubescape.chart_version" nil }}
+    installed: {{ .Values | get "kubescape.installed" false }}
+    labels:
+      tier: sec
+    values:
+      - values.yaml.gotmpl
