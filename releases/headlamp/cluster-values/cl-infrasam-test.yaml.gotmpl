@@ -1,0 +1,11 @@
+---
+ingress:
+  hosts:
+    - host: dashboard.{{ printf "%s.%s" (index (splitList "-" .Environment.Name) 1) (index (splitList "-" .Environment.Name) 2) }}.k8slabs.se
+      paths:
+        - path: /
+          type: Prefix
+  tls:
+    - hosts:
+        - dashboard.{{ printf "%s.%s" (index (splitList "-" .Environment.Name) 1) (index (splitList "-" .Environment.Name) 2) }}.k8slabs.se
+      secretName: headlamp-tls

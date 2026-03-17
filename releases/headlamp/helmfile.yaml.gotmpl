@@ -1,0 +1,22 @@
+---
+bases:
+  - ../../bases/helmDefaults.yaml
+  - ../../bases/environments.yaml.gotmpl
+  - ../../bases/apiVersions.yaml
+
+---
+repositories:
+  - name: headlamp
+    url: https://kubernetes-sigs.github.io/headlamp/
+
+releases:
+  - name: headlamp
+    chart: headlamp/headlamp
+    namespace: headlamp
+    version: {{ .Values | get "headlamp.chart_version" nil }}
+    installed: {{ .Values | get "headlamp.installed" false }}
+    labels:
+      tier: inf
+    values:
+      - values.yaml.gotmpl
+      - "cluster-values/{{ .Environment.Name }}.yaml.gotmpl"

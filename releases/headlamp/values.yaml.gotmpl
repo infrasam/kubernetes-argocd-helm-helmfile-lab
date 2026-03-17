@@ -1,0 +1,86 @@
+---
+ingress:
+  enabled: true
+  ingressClassName: contour
+  annotations:
+    kubernetes.io/ingress.class: contour
+    cert-manager.io/cluster-issuer: cloudflare
+    ingress.kubernetes.io/force-ssl-redirect: "true"
+    projectcontour.io/response-timeout: "1800s"
+    projectcontour.io/websocket-routes: "/"
+
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 100
+  runAsGroup: 101
+  fsGroup: 2000
+  fsGroupChangePolicy: "OnRootMismatch"
+  seccompProfile:
+    type: RuntimeDefault
+
+securityContext:
+  runAsNonRoot: true
+  runAsUser: 100
+  runAsGroup: 101
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: false
+  privileged: false
+  capabilities:
+    drop:
+      - ALL
+  seccompProfile:
+    type: RuntimeDefault
+
+volumes:
+  - name: headlamp-plugins
+    emptyDir: {}
+  - name: headlamp-config
+    emptyDir: {}
+  - name: headlamp-tmp
+    emptyDir: {}
+
+volumeMounts:
+  - name: headlamp-plugins
+    mountPath: /build/plugins
+  - name: headlamp-config
+    mountPath: /home/headlamp/.config
+  - name: headlamp-tmp
+    mountPath: /tmp
+
+config:
+  pluginsDir: "/build/plugins"
+
+initContainers:
+  - name: kubescape-plugin
+    image: quay.io/kubescape/headlamp-plugin:v0.10.5
+    command: ["/bin/sh", "-c", "mkdir -p /build/plugins && cp -r /plugins/* /build/plugins/"]
+    volumeMounts:
+      - name: headlamp-plugins
+        mountPath: /build/plugins
+    securityContext:
+      runAsNonRoot: true
+      runAsUser: 100
+      runAsGroup: 101
+      allowPrivilegeEscalation: false
+      readOnlyRootFilesystem: false
+      capabilities:
+        drop: ["ALL"]
+      seccompProfile:
+        type: RuntimeDefault
+
+  - name: trivy-plugin
+    image: ghcr.io/kubebeam/trivy-headlamp-plugin:v0.3.1
+    command: ["/bin/sh", "-c", "mkdir -p /build/plugins && cp -r /plugins/* /build/plugins/"]
+    volumeMounts:
+      - name: headlamp-plugins
+        mountPath: /build/plugins
+    securityContext:
+      runAsNonRoot: true
+      runAsUser: 100
+      runAsGroup: 101
+      allowPrivilegeEscalation: false
+      readOnlyRootFilesystem: false
+      capabilities:
+        drop: ["ALL"]
+      seccompProfile:
+        type: RuntimeDefault

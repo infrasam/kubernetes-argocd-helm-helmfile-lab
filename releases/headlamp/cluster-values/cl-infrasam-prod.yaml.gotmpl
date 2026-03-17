@@ -1,0 +1,11 @@
+---
+ingress:
+  hosts:
+    - host: dashboard.k8slabs.se
+      paths:
+        - path: /
+          type: Prefix
+  tls:
+    - hosts:
+        - dashboard.k8slabs.se
+      secretName: headlamp-tls
