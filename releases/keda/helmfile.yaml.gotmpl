@@ -1,0 +1,41 @@
+---
+bases:
+  - ../../bases/helmDefaults.yaml
+  - ../../bases/environments.yaml.gotmpl
+  - ../../bases/apiVersions.yaml
+---
+repositories:
+  - name: kedacore
+    url: https://kedacore.github.io/charts
+
+releases:
+  - name: keda
+    chart: kedacore/keda
+    namespace: keda
+    version: {{ .Values | get "keda.chart_version" "2.18.1" }}
+    installed: {{ .Values | get "keda.installed" true }}
+    labels:
+      tier: inf
+    values:
+      - values.yaml.gotmpl
+
+  - name: keda-http-addon
+    chart: kedacore/keda-add-ons-http
+    namespace: keda
+    version: {{ .Values | get "keda-add-ons-http.chart_version" "0.11.1" }}
+    installed: {{ .Values | get "keda-add-ons-http.installed" true }}
+    labels:
+      tier: inf
+      argocd.argoproj.io/sync-wave: "1"
+    values:
+      - keda-http-addon-values.yaml.gotmpl
+
+  - name: http-app-scaler
+    chart: ./charts/http-app-scaler
+    namespace: keda
+    installed: true
+    labels:
+      tier: inf
+      argocd.argoproj.io/sync-wave: "2"
+    values:
+      - ./charts/http-app-scaler/values.yaml

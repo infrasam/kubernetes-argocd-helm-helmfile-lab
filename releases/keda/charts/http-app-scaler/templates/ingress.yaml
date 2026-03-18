@@ -1,0 +1,28 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: http-app-keda-ingress
+  namespace: keda
+  annotations:
+    kubernetes.io/ingress.class: contour
+    cert-manager.io/cluster-issuer: cloudflare
+    ingress.kubernetes.io/force-ssl-redirect: "true"
+spec:
+  ingressClassName: contour
+  tls:
+    - secretName: http-app-tls
+      hosts:
+        - http-app.k8slabs.se
+  rules:
+    - host: http-app.k8slabs.se
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: keda-add-ons-http-interceptor-proxy
+                port:
+                  number: 8080
+
+

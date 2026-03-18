@@ -1,0 +1,24 @@
+apiVersion: http.keda.sh/v1alpha1
+kind: HTTPScaledObject
+metadata:
+  name: http-app-httpso
+spec:
+  hosts:
+    - http-app.k8slabs.se
+  pathPrefixes:
+    - /
+  scaleTargetRef:
+    name: http-app
+    kind: Deployment
+    apiVersion: apps/v1
+    service: http-app-service
+    port: 80  
+  replicas:
+    min: 0
+    max: 10
+  scaledownPeriod: 300
+  scalingMetric:
+      requestRate:
+          granularity: 10s
+          targetValue: 5
+          window: 1m
