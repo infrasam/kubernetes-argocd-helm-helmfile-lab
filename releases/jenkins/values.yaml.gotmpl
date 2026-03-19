@@ -1,0 +1,90 @@
+---
+controller:
+  podSecurityContextOverride:
+    runAsNonRoot: true
+    runAsUser: 1000
+    runAsGroup: 1000
+    fsGroup: 1000
+    seccompProfile:
+      type: RuntimeDefault
+
+  containerSecurityContext:
+    runAsUser: 1000
+    runAsGroup: 1000
+    runAsNonRoot: true
+    readOnlyRootFilesystem: true
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop:
+        - ALL
+    seccompProfile:
+      type: RuntimeDefault
+
+  ingress:
+    enabled: true
+    ingressClassName: contour
+    annotations:
+      kubernetes.io/ingress.class: contour
+      cert-manager.io/cluster-issuer: cloudflare
+      ingress.kubernetes.io/force-ssl-redirect: "true"
+    hostName: jenkins.k8slabs.se
+    tls:
+      - hosts:
+          - jenkins.k8slabs.se
+        secretName: jenkins-tls
+
+  additionalPlugins:
+    - job-dsl:1.89
+    - pipeline-utility-steps:2.17.0
+
+  admin:
+    existingSecret: es-jenkins
+    passwordKey: jenkins-admin-password
+
+  containerEnvFrom:
+    - secretRef:
+        name: es-jenkins
+
+  JCasC:
+    configScripts:
+      credentials: |
+        credentials:
+          system:
+            domainCredentials:
+              - credentials:
+                  - usernamePassword:
+                      id: github-token
+                      scope: GLOBAL
+                      username: "infrasam"
+                      password: "${GITHUB_TOKEN}"
+                      description: "GitHub token for git operations and API"
+      jobs: |
+        jobs:
+          - script: |
+              pipelineJob('renovate') {
+                description('Process Renovate PRs: regenerate Kubernetes manifests')
+                triggers {
+                  cron('15 * * * *')
+                }
+                definition {
+                  cpsScm {
+                    scm {
+                      git {
+                        remote {
+                          url('https://github.com/infrasam/kubernetes-argocd-helm-helmfile-lab.git')
+                          credentials('github-token')
+                        }
+                        branches('*/main')
+                      }
+                    }
+                    scriptPath('pipelines/Jenkinsfile.renovate')
+                  }
+                }
+              }
+
+agent:
+  restrictedPssSecurityContext: true
+
+persistence:
+  enabled: true
+  size: "5Gi"

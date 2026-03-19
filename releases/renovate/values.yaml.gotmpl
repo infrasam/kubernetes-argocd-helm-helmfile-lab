@@ -1,0 +1,63 @@
+---
+cronjob:
+  schedule: "0 * * * *"
+  failedJobsHistoryLimit: 1
+  successfulJobsHistoryLimit: 1
+
+securityContext:
+  runAsNonRoot: true
+  runAsUser: 1000
+  runAsGroup: 1000
+  fsGroup: 1000
+  seccompProfile:
+    type: RuntimeDefault
+
+extraVolumes:
+  - name: tmp
+    emptyDir: {}
+
+extraVolumeMounts:
+  - name: tmp
+    mountPath: /tmp
+
+renovate:
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 1000
+    allowPrivilegeEscalation: false
+    readOnlyRootFilesystem: true
+    capabilities:
+      drop:
+        - ALL
+    seccompProfile:
+      type: RuntimeDefault
+
+  config: |
+    {
+      "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+      "platform": "github",
+      "repositories": ["infrasam/kubernetes-argocd-helm-helmfile-lab"],
+      "onboarding": false,
+      "requireConfig": "optional",
+      "baseBranchPatterns": ["main"],
+      "customManagers": [
+        {
+          "customType": "regex",
+          "managerFilePatterns": ["/^bases/environments/.+\\.yaml\\.gotmpl$/"],
+          "matchStrings": [
+            "# renovate: datasource=(?<datasource>.*?) depName=(?<depName>.*?)( registryUrl=(?<registryUrl>.*?))?( versioning=(?<versioning>.*?))?\\s+chart_version:\\s+(?<currentValue>[\\d.]+)"
+          ],
+          "versioningTemplate": "{{ "{{#if versioning}}{{{versioning}}}{{else}}semver{{/if}}" }}"
+        }
+      ],
+      "gitIgnoredAuthors": ["jenkins-ci@infrasam.github.io"],
+      "enabledManagers": ["custom.regex"],
+      "separateMinorPatch": true,
+      "prCreation": "immediate",
+      "recreateWhen": "always",
+      "prBodyNotes": ["**Automation:** Renovate scans hourly. Jenkins regenerates manifests 15 minutes after."]
+    }
+
+envFrom:
+  - secretRef:
+      name: es-renovate-secrets

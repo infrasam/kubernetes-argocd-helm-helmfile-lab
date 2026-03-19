@@ -5,55 +5,78 @@ cluster: cl-infrasam-prod
 
 argocd:
   installed: true
+  # renovate: datasource=helm depName=argo-cd registryUrl=https://argoproj.github.io/argo-helm
   chart_version: 8.3.0
 
 argocd_apps:
   installed: true
+  # renovate: datasource=helm depName=argocd-apps registryUrl=https://argoproj.github.io/argo-helm
   chart_version: 1.5.0
 
 cert-manager:
   installed: true
+  # renovate: datasource=helm depName=cert-manager registryUrl=https://charts.jetstack.io
   chart_version: 1.19.3
 
 contour:
   installed: true
+  # renovate: datasource=helm depName=contour registryUrl=https://projectcontour.github.io/helm-charts/
   chart_version: 0.2.1
 
 external-secrets:
   installed: true
+  # renovate: datasource=helm depName=external-secrets registryUrl=https://charts.external-secrets.io
   chart_version: 0.15.1
 
 external-dns:
   installed: true
+  # renovate: datasource=helm depName=external-dns registryUrl=https://kubernetes-sigs.github.io/external-dns/
   chart_version: 1.20.0
 
 falco:
   installed: true
+  # renovate: datasource=helm depName=falco registryUrl=https://falcosecurity.github.io/charts
   chart_version: 8.0.0
+
+jenkins:
+  installed: true
+  # renovate: datasource=helm depName=jenkins registryUrl=https://charts.jenkins.io
+  chart_version: 5.9.8
 
 headlamp:
   installed: true
+  # renovate: datasource=helm depName=headlamp registryUrl=https://kubernetes-sigs.github.io/headlamp/
   chart_version: 0.40.0
 
 keda:
   installed: true
+  # renovate: datasource=helm depName=keda registryUrl=https://kedacore.github.io/charts
   chart_version: 2.18.1
 
 keda-add-ons-http:
   installed: true
+  # renovate: datasource=helm depName=keda-add-ons-http registryUrl=https://kedacore.github.io/charts
   chart_version: 0.11.1
 
 kube-prometheus-stack:
   installed: true
+  # renovate: datasource=helm depName=kube-prometheus-stack registryUrl=https://prometheus-community.github.io/helm-charts
   chart_version: 81.6.1
 
 kubescape:
   installed: true
+  # renovate: datasource=helm depName=kubescape-operator registryUrl=https://kubescape.github.io/helm-charts/
   chart_version: 1.30.5
 
 metallb:
   installed: true
+  # renovate: datasource=helm depName=metallb registryUrl=https://metallb.github.io/metallb
   chart_version: 0.15.3
+
+renovate:
+  installed: true
+  # renovate: datasource=docker depName=ghcr.io/renovatebot/charts/renovate
+  chart_version: 46.55.0
 
 speedtest:
   installed: true
@@ -61,8 +84,10 @@ speedtest:
 
 trivy:
   installed: true
+  # renovate: datasource=helm depName=trivy-operator registryUrl=https://aquasecurity.github.io/helm-charts/
   chart_version: 0.32.0
 
 vault:
   installed: true
+  # renovate: datasource=helm depName=vault registryUrl=https://helm.releases.hashicorp.com
   chart_version: 0.32.0

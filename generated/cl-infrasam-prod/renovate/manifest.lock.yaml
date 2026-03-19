@@ -1,0 +1,136 @@
+---
+# Source: renovate/templates/config.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: renovate-config
+  namespace: renovate
+  labels:
+    helm.sh/chart: renovate-46.55.0
+    app.kubernetes.io/name: renovate
+    app.kubernetes.io/instance: renovate
+    app.kubernetes.io/version: "43.58.0"
+    app.kubernetes.io/managed-by: Helm
+data:
+  config.json: |-
+    {
+      "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+      "platform": "github",
+      "repositories": ["infrasam/kubernetes-argocd-helm-helmfile-lab"],
+      "onboarding": false,
+      "requireConfig": "optional",
+      "baseBranchPatterns": ["main"],
+      "customManagers": [
+        {
+          "customType": "regex",
+          "managerFilePatterns": ["/^bases/environments/.+\\.yaml\\.gotmpl$/"],
+          "matchStrings": [
+            "# renovate: datasource=(?<datasource>.*?) depName=(?<depName>.*?)( registryUrl=(?<registryUrl>.*?))?( versioning=(?<versioning>.*?))?\\s+chart_version:\\s+(?<currentValue>[\\d.]+)"
+          ],
+          "versioningTemplate": "{{#if versioning}}{{{versioning}}}{{else}}semver{{/if}}"
+        }
+      ],
+      "gitIgnoredAuthors": ["jenkins-ci@infrasam.github.io"],
+      "enabledManagers": ["custom.regex"],
+      "separateMinorPatch": true,
+      "prCreation": "immediate",
+      "recreateWhen": "always",
+      "prBodyNotes": ["**Automation:** Renovate scans hourly. Jenkins regenerates manifests 15 minutes after."]
+    }
+---
+# Source: renovate/templates/cronjob.yaml
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: renovate
+  namespace: renovate
+  labels:
+    helm.sh/chart: renovate-46.55.0
+    app.kubernetes.io/name: renovate
+    app.kubernetes.io/instance: renovate
+    app.kubernetes.io/version: "43.58.0"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  schedule: "0 * * * *"
+  failedJobsHistoryLimit: 1
+  successfulJobsHistoryLimit: 1
+  jobTemplate:
+    metadata:
+      labels:
+        app.kubernetes.io/name: renovate
+        app.kubernetes.io/instance: renovate
+    spec:
+      template:
+        metadata:
+          labels:
+            app.kubernetes.io/name: renovate
+            app.kubernetes.io/instance: renovate
+        spec:
+          serviceAccountName: default
+          restartPolicy: Never
+          containers:
+            - name: renovate
+              image: "ghcr.io/renovatebot/renovate:43.58.0"
+              imagePullPolicy: IfNotPresent
+              volumeMounts:
+                - name: config-volume
+                  mountPath: /usr/src/app/config.json
+                  subPath: config.json
+                - mountPath: /tmp
+                  name: tmp
+              env:
+                - name: RENOVATE_CONFIG_FILE
+                  value: /usr/src/app/config.json
+              envFrom:
+                - secretRef:
+                    name: es-renovate-secrets
+              securityContext:
+                allowPrivilegeEscalation: false
+                capabilities:
+                  drop:
+                  - ALL
+                readOnlyRootFilesystem: true
+                runAsNonRoot: true
+                runAsUser: 1000
+                seccompProfile:
+                  type: RuntimeDefault
+          volumes:
+            - name: config-volume
+              configMap:
+                name: renovate-config
+            - emptyDir: {}
+              name: tmp
+          securityContext:
+            fsGroup: 1000
+            runAsGroup: 1000
+            runAsNonRoot: true
+            runAsUser: 1000
+            seccompProfile:
+              type: RuntimeDefault
+
+---
+# Source: es-secrets/templates/externalsecret.yaml
+apiVersion: external-secrets.io/v1beta1
+kind: ExternalSecret
+metadata:
+  name: es-renovate-secrets
+  namespace: renovate
+  labels:
+    app.kubernetes.io/name: es-secrets
+    app.kubernetes.io/instance: es-secrets
+    app.kubernetes.io/managed-by: Helm
+    helm.sh/chart: es-secrets-0.1.0
+spec:
+  secretStoreRef:
+    kind: ClusterSecretStore
+    name: css-cl-infrasam-prod
+  refreshInterval: "1h"
+  target:
+    creationPolicy: Owner
+    deletionPolicy: Delete
+  data:
+    - remoteRef:
+        key: renovate/github-token
+        property: token
+      secretKey: RENOVATE_TOKEN
+

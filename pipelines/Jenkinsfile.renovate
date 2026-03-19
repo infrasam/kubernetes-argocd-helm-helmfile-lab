@@ -1,0 +1,154 @@
+pipeline {
+    agent {
+        kubernetes {
+            yaml '''
+apiVersion: v1
+kind: Pod
+spec:
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 1000
+    runAsGroup: 1000
+    fsGroup: 1000
+    seccompProfile:
+      type: RuntimeDefault
+  containers:
+  - name: helmfile
+    image: ghcr.io/helmfile/helmfile:v1.4.1
+    command: ['sleep']
+    args: ['infinity']
+    env:
+    - name: HELM_CONFIG_HOME
+      value: /tmp/.helm/config
+    - name: HELM_CACHE_HOME
+      value: /tmp/.helm/cache
+    - name: HELM_DATA_HOME
+      value: /tmp/.helm/data
+    securityContext:
+      allowPrivilegeEscalation: false
+      readOnlyRootFilesystem: false
+      capabilities:
+        drop: ['ALL']
+'''
+        }
+    }
+
+    environment {
+        GITHUB_OWNER = 'infrasam'
+        GITHUB_REPO  = 'kubernetes-argocd-helm-helmfile-lab'
+    }
+
+    triggers {
+        cron('15 * * * *')
+    }
+
+    stages {
+        // Query GitHub API for active PRs and filter to Renovate branches only
+        stage('Find Active PRs') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'github-token', usernameVariable: 'GH_USER', passwordVariable: 'GH_TOKEN')]) {
+                    script {
+                        def response = sh(
+                            script: 'curl -sf -H "Authorization: token $GH_TOKEN" "https://api.github.com/repos/$GITHUB_OWNER/$GITHUB_REPO/pulls?state=open"',
+                            returnStdout: true
+                        ).trim()
+
+                        def prs = readJSON(text: response) ?: []
+
+                        def renovatePrs = prs.findAll { pr ->
+                            pr.head.ref.startsWith('renovate/')
+                        }
+
+                        env.PR_LIST = writeJSON(returnText: true, json: renovatePrs.collect { pr ->
+                            [
+                                id: pr.number,
+                                sourceBranch: pr.head.ref,
+                                title: pr.title
+                            ]
+                        })
+
+                        echo "Found ${renovatePrs.size()} Renovate PR(s) out of ${prs.size()} active PR(s)"
+                    }
+                }
+            }
+        }
+
+        // For each Renovate PR: checkout, regenerate manifests, and push changes back
+        stage('Process PRs') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'github-token', usernameVariable: 'GH_USER', passwordVariable: 'GH_TOKEN')]) {
+                    script {
+                        def prs = readJSON(text: env.PR_LIST)
+
+                        for (pr in prs) {
+                            echo "Processing PR #${pr.id}: ${pr.title} (branch: ${pr.sourceBranch})"
+
+                            dir("pr-${pr.id}") {
+                                // Checkout the Renovate PR branch
+                                checkout([
+                                    $class: 'GitSCM',
+                                    branches: [[name: pr.sourceBranch]],
+                                    userRemoteConfigs: [[
+                                        url: "https://github.com/${GITHUB_OWNER}/${GITHUB_REPO}.git",
+                                        credentialsId: 'github-token'
+                                    ]]
+                                ])
+
+                                // Derive app name from branch by matching against existing releases
+                                // e.g. renovate/external-dns-1.2.x -> external-dns
+                                def branchSuffix = pr.sourceBranch.replaceAll(/^renovate\//, '')
+                                def releases = sh(script: 'ls releases/', returnStdout: true).trim().split('\n')
+                                def app = releases.findAll { branchSuffix.startsWith(it) }
+                                    .max { it.length() } // longest match wins
+
+                                if (!app) {
+                                    echo "WARNING: Could not detect app from branch '${pr.sourceBranch}' - skipping"
+                                    return // skip this PR, continue with next
+                                }
+
+                                // Regenerate Kubernetes manifests and README for the updated chart version
+                                container('helmfile') {
+                                    sh 'chmod +x manifest-generate.sh'
+                                    echo "Regenerating manifests for: ${app}"
+                                    sh "./manifest-generate.sh ${app}"
+                                }
+
+                                // Commit and push regenerated manifests if anything changed
+                                env.SOURCE_BRANCH = pr.sourceBranch
+                                env.CURRENT_PR_ID = pr.id
+                                sh '''
+                                    git remote set-url origin "https://$GH_TOKEN@github.com/$GITHUB_OWNER/$GITHUB_REPO.git"
+                                    git config user.email "jenkins-ci@infrasam.github.io"
+                                    git config user.name "Jenkins CI"
+                                    git add generated/ README.md
+                                    git stash
+                                    git checkout -B "$SOURCE_BRANCH"
+                                    git fetch origin "$SOURCE_BRANCH"
+                                    git reset --hard "origin/$SOURCE_BRANCH"
+                                    git stash pop || true
+                                    git add generated/ README.md
+                                    if ! git diff --cached --quiet; then
+                                        git commit -m "chore: regenerate manifests [skip ci]"
+                                        git push origin "$SOURCE_BRANCH"
+                                        echo "Pushed regenerated manifests to $SOURCE_BRANCH"
+                                    else
+                                        echo "No manifest changes for PR #$CURRENT_PR_ID"
+                                    fi
+                                '''
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    post {
+        failure {
+            echo 'Manifest generation failed. Check the logs above for details.'
+        }
+        cleanup {
+            deleteDir()
+        }
+    }
+}

@@ -1,0 +1,33 @@
+---
+bases:
+  - ../../bases/helmDefaults.yaml
+  - ../../bases/environments.yaml.gotmpl
+  - ../../bases/apiVersions.yaml
+
+---
+repositories:
+  - name: jenkins
+    url: https://charts.jenkins.io
+
+releases:
+  - name: jenkins
+    chart: jenkins/jenkins
+    namespace: jenkins
+    version: {{ .Values | get "jenkins.chart_version" nil }}
+    installed: {{ .Values | get "jenkins.installed" false }}
+    labels:
+      tier: inf
+    values:
+      - values.yaml.gotmpl
+    needs:
+      - jenkins/es-secrets
+      
+  - name: es-secrets
+    chart: ../../charts/es-secrets
+    version: ~0.1
+    namespace: jenkins
+    installed: {{ and (.Values | get "jenkins.installed" false) (.Values | get "external-secrets.installed" false) }}
+    labels:
+      tier: inf
+    values:
+      - secret-values.yaml.gotmpl

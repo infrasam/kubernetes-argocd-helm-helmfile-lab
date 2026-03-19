@@ -1,0 +1,32 @@
+---
+bases:
+  - ../../bases/helmDefaults.yaml
+  - ../../bases/environments.yaml.gotmpl
+  - ../../bases/apiVersions.yaml
+
+---
+repositories:
+  - name: renovate
+    url: ghcr.io/renovatebot/charts
+    oci: true
+
+releases:
+  - name: renovate
+    chart: renovate/renovate
+    namespace: renovate
+    version: {{ .Values | get "renovate.chart_version" nil }}
+    installed: {{ .Values | get "renovate.installed" false }}
+    labels:
+      tier: inf
+    values:
+      - values.yaml.gotmpl
+
+  - name: es-secrets
+    chart: ../../charts/es-secrets
+    version: ~0.1
+    namespace: renovate
+    installed: {{ and (.Values | get "renovate.installed" false) (.Values | get "external-secrets.installed" false) }}
+    labels:
+      tier: inf
+    values:
+      - secret-values.yaml.gotmpl
