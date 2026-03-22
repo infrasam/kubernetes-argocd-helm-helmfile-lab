@@ -126,7 +126,7 @@ spec:
                                     git add generated/
                                     if ! git diff --cached --quiet; then
                                         git commit -m "chore: regenerate manifests [skip ci]"
-                                        git push origin "$SOURCE_BRANCH"
+                                        git push origin "HEAD:$SOURCE_BRANCH"
                                         echo "Pushed regenerated manifests to $SOURCE_BRANCH"
                                     else
                                         echo "No manifest changes for PR #$CURRENT_PR_ID"
