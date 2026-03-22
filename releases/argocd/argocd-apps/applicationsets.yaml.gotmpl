@@ -36,40 +36,41 @@ applicationsets:
           syncOptions:
             - CreateNamespace=true
             - ServerSideApply=true
-  cl-infrasam-test:
-    name: cl-infrasam-test
-    namespace: argocd
-    generators:
-      - git:
-          repoURL: https://github.com/infrasam/kubernetes-argocd-helm-helmfile-lab.git
-          revision: main
-          directories:
-            - path: generated/cl-infrasam-test/*
-    syncPolicy:
-      applicationsSync: create-update
-    template:
-      metadata:
-        name: '{{`{{path.basenameNormalized}}-{{path[1]}}`}}'
-        labels:
-          argocd.application: '{{`{{path[2]}}`}}'
-          argocd.environment: '{{`{{path[1]}}`}}'
-        annotations:
-          argocd.argoproj.io/compare-options: IncludeMutationWebhook=true
-      spec:
-        project: cl-infrasam-test
-        source:
-          repoURL: https://github.com/infrasam/kubernetes-argocd-helm-helmfile-lab.git
-          targetRevision: main
-          path: '{{`{{path}}`}}'
-          directory:
-            include: manifest.lock.yaml
-        destination:
-          name: cl-infrasam-test
-          namespace: '{{`{{path.basenameNormalized}}`}}'
-        syncPolicy:
-          automated:
-            prune: false
-            selfHeal: false
-          syncOptions:
-            - CreateNamespace=true
-            - ServerSideApply=true
+  # cl-infrasam-test: (temporarily disabled to save resources, existing cluster resources kept intact)
+  # cl-infrasam-test:
+  #   name: cl-infrasam-test
+  #   namespace: argocd
+  #   generators:
+  #     - git:
+  #         repoURL: https://github.com/infrasam/kubernetes-argocd-helm-helmfile-lab.git
+  #         revision: main
+  #         directories:
+  #           - path: generated/cl-infrasam-test/*
+  #   syncPolicy:
+  #     applicationsSync: create-update
+  #   template:
+  #     metadata:
+  #       name: '{{`{{path.basenameNormalized}}-{{path[1]}}`}}'
+  #       labels:
+  #         argocd.application: '{{`{{path[2]}}`}}'
+  #         argocd.environment: '{{`{{path[1]}}`}}'
+  #       annotations:
+  #         argocd.argoproj.io/compare-options: IncludeMutationWebhook=true
+  #     spec:
+  #       project: cl-infrasam-test
+  #       source:
+  #         repoURL: https://github.com/infrasam/kubernetes-argocd-helm-helmfile-lab.git
+  #         targetRevision: main
+  #         path: '{{`{{path}}`}}'
+  #         directory:
+  #           include: manifest.lock.yaml
+  #       destination:
+  #         name: cl-infrasam-test
+  #         namespace: '{{`{{path.basenameNormalized}}`}}'
+  #       syncPolicy:
+  #         automated:
+  #           prune: false
+  #           selfHeal: false
+  #         syncOptions:
+  #           - CreateNamespace=true
+  #           - ServerSideApply=true
