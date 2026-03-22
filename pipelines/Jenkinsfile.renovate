@@ -101,6 +101,13 @@ spec:
                                 def app = releases.findAll { branchSuffix.startsWith(it) }
                                     .max { it.length() } // longest match wins
 
+                                // Fallback: match after stripping hyphens (e.g. argo-cd -> argocd)
+                                if (!app) {
+                                    def normalizedSuffix = branchSuffix.replaceAll('-', '')
+                                    app = releases.findAll { normalizedSuffix.startsWith(it.replaceAll('-', '')) }
+                                        .max { it.length() }
+                                }
+
                                 if (!app) {
                                     echo "WARNING: Could not detect app from branch '${pr.sourceBranch}' - skipping"
                                     return // skip this PR, continue with next
