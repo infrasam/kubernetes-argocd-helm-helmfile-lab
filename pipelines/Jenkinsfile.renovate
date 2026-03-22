@@ -106,11 +106,13 @@ spec:
                                     return // skip this PR, continue with next
                                 }
 
-                                // Regenerate Kubernetes manifests and README for the updated chart version
+                                // Regenerate Kubernetes manifests for the updated chart version
                                 container('helmfile') {
-                                    sh 'chmod +x manifest-generate.sh'
-                                    echo "Regenerating manifests for: ${app}"
-                                    sh "./manifest-generate.sh ${app}"
+                                    dir("${env.WORKSPACE}/pr-${pr.id}") {
+                                        sh 'chmod +x manifest-generate.sh'
+                                        echo "Regenerating manifests for: ${app}"
+                                        sh "./manifest-generate.sh ${app}"
+                                    }
                                 }
 
                                 // Commit and push regenerated manifests if anything changed
