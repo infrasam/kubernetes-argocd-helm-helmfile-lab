@@ -109,9 +109,8 @@ spec:
                                 // Regenerate Kubernetes manifests for the updated chart version
                                 container('helmfile') {
                                     dir("${env.WORKSPACE}/pr-${pr.id}") {
-                                        sh 'chmod +x manifest-generate.sh'
-                                        echo "Regenerating manifests for: ${app}"
-                                        sh "./manifest-generate.sh ${app}"
+                                            echo "Regenerating manifests for: ${app}"
+                                        sh "bash manifest-generate.sh ${app}"
                                     }
                                 }
 
