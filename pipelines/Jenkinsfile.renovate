@@ -120,13 +120,7 @@ spec:
                                     git remote set-url origin "https://$GH_TOKEN@github.com/$GITHUB_OWNER/$GITHUB_REPO.git"
                                     git config user.email "jenkins-ci@infrasam.github.io"
                                     git config user.name "Jenkins CI"
-                                    git add generated/ README.md
-                                    git stash
-                                    git checkout -B "$SOURCE_BRANCH"
-                                    git fetch origin "$SOURCE_BRANCH"
-                                    git reset --hard "origin/$SOURCE_BRANCH"
-                                    git stash pop || true
-                                    git add generated/ README.md
+                                    git add generated/
                                     if ! git diff --cached --quiet; then
                                         git commit -m "chore: regenerate manifests [skip ci]"
                                         git push origin "$SOURCE_BRANCH"
