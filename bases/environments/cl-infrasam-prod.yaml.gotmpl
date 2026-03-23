@@ -34,7 +34,7 @@ external-dns:
   chart_version: 1.20.0
 
 falco:
-  installed: false
+  installed: true
   # renovate: datasource=helm depName=falco registryUrl=https://falcosecurity.github.io/charts
   chart_version: 8.0.0
 
@@ -59,7 +59,7 @@ keda-add-ons-http:
   chart_version: 0.11.1
 
 kube-prometheus-stack:
-  installed: false
+  installed: true
   # renovate: datasource=helm depName=kube-prometheus-stack registryUrl=https://prometheus-community.github.io/helm-charts
   chart_version: 81.6.1
 
@@ -79,7 +79,7 @@ renovate:
   chart_version: 46.55.0
 
 trivy:
-  installed: false
+  installed: true
   # renovate: datasource=helm depName=trivy-operator registryUrl=https://aquasecurity.github.io/helm-charts/
   chart_version: 0.32.0
 

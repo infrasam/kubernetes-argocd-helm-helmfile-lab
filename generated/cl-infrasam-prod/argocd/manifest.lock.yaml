@@ -25183,7 +25183,7 @@ metadata:
     app.kubernetes.io/version: "v3.1.0"
 spec:  
   ports:
-  - name: https
+  - name: http
     protocol: TCP
     port: 5556
     targetPort: http
@@ -25436,7 +25436,12 @@ spec:
               containerPort: 7000
               protocol: TCP
           resources:
-            {}
+            limits:
+              cpu: 200m
+              memory: 128Mi
+            requests:
+              cpu: 25m
+              memory: 32Mi
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:
@@ -25586,7 +25591,12 @@ spec:
             containerPort: 9001
             protocol: TCP
           resources:
-            {}
+            limits:
+              cpu: 100m
+              memory: 64Mi
+            requests:
+              cpu: 10m
+              memory: 32Mi
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:
@@ -25950,7 +25960,12 @@ spec:
           successThreshold: 1
           failureThreshold: 3
         resources:
-          {}
+          limits:
+            cpu: 500m
+            memory: 256Mi
+          requests:
+            cpu: 100m
+            memory: 64Mi
         securityContext:
           allowPrivilegeEscalation: false
           capabilities:
@@ -25970,7 +25985,12 @@ spec:
         imagePullPolicy: IfNotPresent
         name: copyutil
         resources:
-          {}
+          limits:
+            cpu: 500m
+            memory: 256Mi
+          requests:
+            cpu: 100m
+            memory: 64Mi
         securityContext:
           allowPrivilegeEscalation: false
           capabilities:
@@ -26425,7 +26445,12 @@ spec:
           successThreshold: 1
           failureThreshold: 3
         resources:
-          {}
+          limits:
+            cpu: 200m
+            memory: 128Mi
+          requests:
+            cpu: 50m
+            memory: 64Mi
         securityContext:
           allowPrivilegeEscalation: false
           capabilities:
@@ -26571,7 +26596,12 @@ spec:
           containerPort: 5558
           protocol: TCP
         resources:
-          {}
+          limits:
+            cpu: 100m
+            memory: 64Mi
+          requests:
+            cpu: 10m
+            memory: 32Mi
         securityContext:
           allowPrivilegeEscalation: false
           capabilities:
@@ -26603,7 +26633,12 @@ spec:
         - mountPath: /tmp
           name: dexconfig
         resources:
-          {}
+          limits:
+            cpu: 100m
+            memory: 64Mi
+          requests:
+            cpu: 10m
+            memory: 32Mi
         securityContext:
           allowPrivilegeEscalation: false
           capabilities:
@@ -26702,7 +26737,12 @@ spec:
           containerPort: 6379
           protocol: TCP
         resources:
-          {}
+          limits:
+            cpu: 200m
+            memory: 64Mi
+          requests:
+            cpu: 25m
+            memory: 32Mi
         securityContext:
           allowPrivilegeEscalation: false
           capabilities:
@@ -27067,7 +27107,12 @@ spec:
           successThreshold: 1
           failureThreshold: 3
         resources:
-          {}
+          limits:
+            cpu: 500m
+            memory: 384Mi
+          requests:
+            cpu: 100m
+            memory: 128Mi
         securityContext:
           allowPrivilegeEscalation: false
           capabilities:
