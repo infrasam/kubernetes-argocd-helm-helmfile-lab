@@ -1,25 +1,4 @@
 ---
-# Source: vault/templates/server-disruptionbudget.yaml
-# PodDisruptionBudget to prevent degrading the server cluster through
-# voluntary cluster changes.
-apiVersion: policy/v1
-kind: PodDisruptionBudget
-metadata:
-  name: vault
-  namespace: vault
-  labels:
-    helm.sh/chart: vault-0.32.0
-    app.kubernetes.io/name: vault
-    app.kubernetes.io/instance: vault
-    app.kubernetes.io/managed-by: Helm
-spec:
-  maxUnavailable: 1
-  selector:
-    matchLabels:
-      app.kubernetes.io/name: vault
-      app.kubernetes.io/instance: vault
-      component: server
----
 # Source: vault/templates/injector-serviceaccount.yaml
 apiVersion: v1
 kind: ServiceAccount
@@ -64,11 +43,9 @@ data:
       cluster_address = "[::]:8201"
     }
     
-    storage "raft" {
+    storage "file" {
       path = "/vault/data"
     }
-    
-    service_registration "kubernetes" {}
     
     disable_mlock = true
 ---
@@ -127,42 +104,6 @@ subjects:
   name: vault
   namespace: vault
 ---
-# Source: vault/templates/server-discovery-role.yaml
-apiVersion: rbac.authorization.k8s.io/v1
-kind: Role
-metadata:
-  namespace: vault
-  name: vault-discovery-role
-  labels:
-    helm.sh/chart: vault-0.32.0
-    app.kubernetes.io/name: vault
-    app.kubernetes.io/instance: vault
-    app.kubernetes.io/managed-by: Helm
-rules:
-- apiGroups: [""]
-  resources: ["pods"]
-  verbs: ["get", "watch", "list", "update", "patch"]
----
-# Source: vault/templates/server-discovery-rolebinding.yaml
-apiVersion: rbac.authorization.k8s.io/v1
-kind: RoleBinding
-metadata:
-  name: vault-discovery-rolebinding
-  namespace: vault
-  labels:
-    helm.sh/chart: vault-0.32.0
-    app.kubernetes.io/name: vault
-    app.kubernetes.io/instance: vault
-    app.kubernetes.io/managed-by: Helm
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: Role
-  name: vault-discovery-role
-subjects:
-- kind: ServiceAccount
-  name: vault
-  namespace: vault
----
 # Source: vault/templates/injector-service.yaml
 apiVersion: v1
 kind: Service
@@ -183,63 +124,6 @@ spec:
     app.kubernetes.io/name: vault-agent-injector
     app.kubernetes.io/instance: vault
     component: webhook
----
-# Source: vault/templates/server-ha-active-service.yaml
-# Service for active Vault pod
-apiVersion: v1
-kind: Service
-metadata:
-  name: vault-active
-  namespace: vault
-  labels:
-    helm.sh/chart: vault-0.32.0
-    app.kubernetes.io/name: vault
-    app.kubernetes.io/instance: vault
-    app.kubernetes.io/managed-by: Helm
-    vault-active: "true"
-  annotations:
-spec:
-  publishNotReadyAddresses: true
-  ports:
-    - name: http
-      port: 8200
-      targetPort: 8200
-    - name: https-internal
-      port: 8201
-      targetPort: 8201
-  selector:
-    app.kubernetes.io/name: vault
-    app.kubernetes.io/instance: vault
-    component: server
-    vault-active: "true"
----
-# Source: vault/templates/server-ha-standby-service.yaml
-# Service for standby Vault pod
-apiVersion: v1
-kind: Service
-metadata:
-  name: vault-standby
-  namespace: vault
-  labels:
-    helm.sh/chart: vault-0.32.0
-    app.kubernetes.io/name: vault
-    app.kubernetes.io/instance: vault
-    app.kubernetes.io/managed-by: Helm
-  annotations:
-spec:
-  publishNotReadyAddresses: true
-  ports:
-    - name: http
-      port: 8200
-      targetPort: 8200
-    - name: https-internal
-      port: 8201
-      targetPort: 8201
-  selector:
-    app.kubernetes.io/name: vault
-    app.kubernetes.io/instance: vault
-    component: server
-    vault-active: "false"
 ---
 # Source: vault/templates/server-headless-service.yaml
 # Service for Vault cluster
@@ -377,11 +261,11 @@ spec:
         - name: sidecar-injector
           resources:
             limits:
-              cpu: 250m
-              memory: 128Mi
-            requests:
-              cpu: 50m
+              cpu: 100m
               memory: 64Mi
+            requests:
+              cpu: 25m
+              memory: 32Mi
   
           image: "hashicorp/vault-k8s:1.7.2"
           imagePullPolicy: "IfNotPresent"
@@ -474,7 +358,7 @@ metadata:
 spec:
   serviceName: vault-internal
   podManagementPolicy: Parallel
-  replicas: 3
+  replicas: 1
   updateStrategy:
     type: OnDelete
   selector:
@@ -494,14 +378,13 @@ spec:
       
       affinity:
         podAntiAffinity:
-          preferredDuringSchedulingIgnoredDuringExecution:
-            - weight: 100
-              podAffinityTerm:
-                labelSelector:
-                  matchLabels:
-                    app.kubernetes.io/name: vault
-                    component: server
-                topologyKey: kubernetes.io/hostname
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchLabels:
+                  app.kubernetes.io/name: vault
+                  app.kubernetes.io/instance: "vault"
+                  component: server
+              topologyKey: kubernetes.io/hostname
   
       
       
@@ -527,11 +410,11 @@ spec:
         - name: vault
           resources:
             limits:
-              cpu: 500m
-              memory: 512Mi
-            requests:
               cpu: 250m
               memory: 256Mi
+            requests:
+              cpu: 50m
+              memory: 128Mi
   
           image: hashicorp/vault:1.21.2
           imagePullPolicy: IfNotPresent
@@ -610,7 +493,7 @@ spec:
               name: http-rep
           readinessProbe:
             httpGet:
-              path: "/v1/sys/health?standbyok=true"
+              path: "/v1/sys/health"
               port: 8200
               scheme: HTTP
             failureThreshold: 2
@@ -677,7 +560,7 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: vault-active
+                name: vault
                 port:
                   number: 8200
 ---

@@ -1,34 +1,18 @@
 server:
-  ha:
+  standalone:
     enabled: true
-    replicas: 3
-    raft:
-      enabled: true
-      config: |
-        ui = true
+    config: |
+      ui = true
 
-        listener "tcp" {
-          tls_disable = 1
-          address = "[::]:8200"
-          cluster_address = "[::]:8201"
-        }
+      listener "tcp" {
+        tls_disable = 1
+        address = "[::]:8200"
+        cluster_address = "[::]:8201"
+      }
 
-        storage "raft" {
-          path = "/vault/data"
-        }
-
-        service_registration "kubernetes" {}
-
-  affinity: |
-    podAntiAffinity:
-      preferredDuringSchedulingIgnoredDuringExecution:
-        - weight: 100
-          podAffinityTerm:
-            labelSelector:
-              matchLabels:
-                app.kubernetes.io/name: vault
-                component: server
-            topologyKey: kubernetes.io/hostname
+      storage "file" {
+        path = "/vault/data"
+      }
 
   dataStorage:
     enabled: true
@@ -37,15 +21,15 @@ server:
 
   resources:
     requests:
+      memory: 128Mi
+      cpu: 50m
+    limits:
       memory: 256Mi
       cpu: 250m
-    limits:
-      memory: 512Mi
-      cpu: 500m
 
   readinessProbe:
     enabled: true
-    path: "/v1/sys/health?standbyok=true"
+    path: "/v1/sys/health"
 
   ingress:
     enabled: true
@@ -68,8 +52,8 @@ injector:
   enabled: true
   resources:
     requests:
-      memory: 64Mi
-      cpu: 50m
+      memory: 32Mi
+      cpu: 25m
     limits:
-      memory: 128Mi
-      cpu: 250m
+      memory: 64Mi
+      cpu: 100m

@@ -488,10 +488,10 @@ spec:
           command: [ "sh", "/var/jenkins_config/apply_config.sh" ]
           resources:
             limits:
-              cpu: 2000m
-              memory: 4096Mi
+              cpu: 1000m
+              memory: 768Mi
             requests:
-              cpu: 50m
+              cpu: 250m
               memory: 256Mi
           volumeMounts:
             - mountPath: /var/jenkins_home
@@ -571,10 +571,10 @@ spec:
             timeoutSeconds: 5
           resources:
             limits:
-              cpu: 2000m
-              memory: 4096Mi
+              cpu: 1000m
+              memory: 768Mi
             requests:
-              cpu: 50m
+              cpu: 250m
               memory: 256Mi
           volumeMounts:
             - mountPath: /var/jenkins_home

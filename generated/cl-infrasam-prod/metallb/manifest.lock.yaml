@@ -2073,6 +2073,13 @@ spec:
           timeoutSeconds: 1
           successThreshold: 1
           failureThreshold: 3
+        resources:
+          limits:
+            cpu: 100m
+            memory: 64Mi
+          requests:
+            cpu: 10m
+            memory: 32Mi
         securityContext:
           allowPrivilegeEscalation: false
           readOnlyRootFilesystem: true
@@ -2263,6 +2270,13 @@ spec:
           timeoutSeconds: 1
           successThreshold: 1
           failureThreshold: 3
+        resources:
+          limits:
+            cpu: 100m
+            memory: 64Mi
+          requests:
+            cpu: 10m
+            memory: 32Mi
         securityContext:
           allowPrivilegeEscalation: false
           readOnlyRootFilesystem: true
