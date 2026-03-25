@@ -3,14 +3,6 @@ webserver:
   enabled: true
   prometheus_metrics_enabled: true
 
-resources:
-  requests:
-    cpu: 100m
-    memory: 128Mi
-  limits:
-    cpu: 500m
-    memory: 256Mi
-
 falcosidekick:
   enabled: true
 
@@ -27,14 +19,6 @@ falcosidekick:
     capabilities:
       drop:
         - ALL
-
-  resources:
-    requests:
-      cpu: 10m
-      memory: 32Mi
-    limits:
-      cpu: 100m
-      memory: 64Mi
 
 metrics:
   enabled: true
