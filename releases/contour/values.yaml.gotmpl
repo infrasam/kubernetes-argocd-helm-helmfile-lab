@@ -1,9 +1,4 @@
 ---
-contour:
-  resources:
-    requests:
-      cpu: 25m
-      memory: 64Mi
-    limits:
-      cpu: 500m
-      memory: 256Mi
+envoy:
+  service:
+    type: LoadBalancer

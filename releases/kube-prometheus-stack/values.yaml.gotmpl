@@ -10,51 +10,34 @@ grafana:
     path: /
   admin:
     existingSecret: "grafana-admin"
-  resources:
-    requests:
-      cpu: 25m
-      memory: 64Mi
-    limits:
-      cpu: 200m
-      memory: 256Mi
 
 prometheusOperator:
   resources:
     requests:
-      cpu: 50m
-      memory: 64Mi
+      cpu: 100m
+      memory: 128Mi
     limits:
       cpu: 200m
-      memory: 128Mi
+      memory: 256Mi
 
 prometheus:
   prometheusSpec:
-    scrapeInterval: 60s
+    scrapeInterval: 60s # Default is 30s to save resources.
     scrapeTimeout: 50s
     evaluationInterval: 60s
-    retention: 5d
-    retentionSize: "5GB"
+    retention: 10d
+    retentionSize: "15GB"
     serviceMonitorSelector:
       matchLabels:
         release: kube-prometheus-stack
 
     resources:
       requests:
-        cpu: 100m
-        memory: 256Mi
+        cpu: 250m
+        memory: 1Gi
       limits:
         cpu: 500m
-        memory: 512Mi
-
-alertmanager:
-  alertmanagerSpec:
-    resources:
-      requests:
-        cpu: 10m
-        memory: 32Mi
-      limits:
-        cpu: 100m
-        memory: 64Mi
+        memory: 2Gi
 
 kubeEtcd:
   enabled: false

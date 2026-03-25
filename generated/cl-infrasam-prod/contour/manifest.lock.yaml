@@ -9685,13 +9685,15 @@ spec:
             timeoutSeconds: 5
             successThreshold: 1
             failureThreshold: 3
-          resources: 
+          resources:
             limits:
-              cpu: 500m
-              memory: 256Mi
+              cpu: 150m
+              ephemeral-storage: 2Gi
+              memory: 192Mi
             requests:
-              cpu: 25m
-              memory: 64Mi
+              cpu: 100m
+              ephemeral-storage: 50Mi
+              memory: 128Mi
           volumeMounts:
             - name: contourcert
               mountPath: /certs
@@ -9904,13 +9906,15 @@ spec:
             seLinuxOptions: {}
             seccompProfile:
               type: RuntimeDefault
-          resources: 
+          resources:
             limits:
-              cpu: 500m
-              memory: 256Mi
+              cpu: 150m
+              ephemeral-storage: 2Gi
+              memory: 192Mi
             requests:
-              cpu: 25m
-              memory: 64Mi
+              cpu: 100m
+              ephemeral-storage: 50Mi
+              memory: 128Mi
           livenessProbe:
             exec:
               command:
