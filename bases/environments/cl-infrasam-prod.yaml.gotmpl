@@ -49,7 +49,7 @@ headlamp:
   chart_version: 0.40.1
 
 kube-prometheus-stack:
-  installed: false
+  installed: true
   # renovate: datasource=helm depName=kube-prometheus-stack registryUrl=https://prometheus-community.github.io/helm-charts
   chart_version: 81.6.9
 
@@ -58,10 +58,19 @@ kubescape:
   # renovate: datasource=helm depName=kubescape-operator registryUrl=https://kubescape.github.io/helm-charts/
   chart_version: 1.30.5
 
+loki:
+  installed: true
+  # renovate: datasource=helm depName=loki registryUrl=https://grafana.github.io/helm-charts
+  chart_version: 6.29.0
+
 metallb:
   installed: true
   # renovate: datasource=helm depName=metallb registryUrl=https://metallb.github.io/metallb
   chart_version: 0.15.3
+
+promtail:
+  # renovate: datasource=helm depName=promtail registryUrl=https://grafana.github.io/helm-charts
+  chart_version: 6.16.6
 
 renovate:
   installed: true

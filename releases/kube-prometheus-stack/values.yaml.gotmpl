@@ -10,6 +10,14 @@ grafana:
     path: /
   admin:
     existingSecret: "grafana-admin"
+  additionalDataSources:
+    - name: Loki
+      type: loki
+      url: http://loki.monitoring.svc.cluster.local:3100
+      access: proxy
+      isDefault: false
+      jsonData:
+        maxLines: 1000
 
 prometheusOperator:
   resources:
@@ -26,7 +34,7 @@ prometheus:
     scrapeTimeout: 50s
     evaluationInterval: 60s
     retention: 10d
-    retentionSize: "15GB"
+    retentionSize: "10GB"
     serviceMonitorSelector:
       matchLabels:
         release: kube-prometheus-stack
@@ -34,10 +42,10 @@ prometheus:
     resources:
       requests:
         cpu: 250m
-        memory: 1Gi
+        memory: 250m
       limits:
-        cpu: 500m
-        memory: 2Gi
+        cpu: 250m
+        memory: 500m
 
 kubeEtcd:
   enabled: false

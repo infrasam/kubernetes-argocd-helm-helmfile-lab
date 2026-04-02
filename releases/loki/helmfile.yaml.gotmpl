@@ -1,0 +1,31 @@
+---
+bases:
+  - ../../bases/helmDefaults.yaml
+  - ../../bases/environments.yaml.gotmpl
+  - ../../bases/apiVersions.yaml
+---
+repositories:
+  - name: grafana
+    url: https://grafana.github.io/helm-charts
+
+releases:
+  - name: loki
+    chart: grafana/loki
+    namespace: monitoring
+    version: {{ .Values | get "loki.chart_version" nil }}
+    installed: {{ .Values | get "loki.installed" false }}
+    labels:
+      tier: inf
+    values:
+      - values.yaml.gotmpl
+      - "cluster-values/{{ .Environment.Name }}.yaml.gotmpl"
+
+  - name: promtail
+    chart: grafana/promtail
+    namespace: monitoring
+    version: {{ .Values | get "promtail.chart_version" nil }}
+    installed: {{ .Values | get "loki.installed" false }}
+    labels:
+      tier: inf
+    values:
+      - promtail-values.yaml.gotmpl
