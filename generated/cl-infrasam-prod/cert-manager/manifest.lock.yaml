@@ -13786,3 +13786,29 @@ spec:
             name: cert-manager-cloudflare
             key: api-token
 
+---
+# Source: es-secrets/templates/externalsecret.yaml
+apiVersion: external-secrets.io/v1beta1
+kind: ExternalSecret
+metadata:
+  name: cert-manager-cloudflare
+  namespace: cert-manager
+  labels:
+    app.kubernetes.io/name: es-secrets
+    app.kubernetes.io/instance: es-secrets
+    app.kubernetes.io/managed-by: Helm
+    helm.sh/chart: es-secrets-0.1.0
+spec:
+  secretStoreRef:
+    kind: ClusterSecretStore
+    name: css-cl-infrasam-prod
+  refreshInterval: "1h"
+  target:
+    creationPolicy: Owner
+    deletionPolicy: Delete
+  data:
+    - remoteRef:
+        key: external-dns/cloudflare
+        property: cloudflare-api-token
+      secretKey: api-token
+

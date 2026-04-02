@@ -29,3 +29,13 @@ releases:
     values:
       #- "issuers/issuers-{{ .Environment.Name }}.yaml.gotmpl"
       - "issuers/issuers-notused.yaml.gotmpl"
+
+  - name: es-secrets
+    chart: ../../charts/es-secrets
+    version: ~0.1
+    namespace: cert-manager
+    installed: {{ and (.Values | get "cert-manager.installed" false) (.Values | get "external-secrets.installed" false) }}
+    labels:
+      tier: cert-manager
+    values:
+      - secret-values.yaml.gotmpl
