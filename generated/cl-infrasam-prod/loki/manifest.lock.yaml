@@ -45,6 +45,7 @@ data:
           rules_directory: /var/loki/rules
     compactor:
       compaction_interval: 10m
+      delete_request_store: filesystem
       retention_delete_delay: 2h
       retention_enabled: true
       working_directory: /var/loki/retention
@@ -267,7 +268,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: 9f3fa9a04ad1ba43b46225f06442f8bc57f7ed198d64e1ff6db5b2e458384893
+        checksum/config: 9a3d1bd19123675b136d02093bf0776a2eb9ec219c8a87789b95d06a94b4475d
       labels:
         app.kubernetes.io/name: loki
         app.kubernetes.io/instance: loki
