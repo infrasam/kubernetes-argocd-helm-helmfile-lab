@@ -30,7 +30,7 @@ prometheusOperator:
 
 prometheus:
   prometheusSpec:
-    scrapeInterval: 60s # Default is 30s to save resources.
+    scrapeInterval: 600s # Default is 30s to save resources.
     scrapeTimeout: 50s
     evaluationInterval: 60s
     retention: 10d
@@ -42,10 +42,10 @@ prometheus:
     resources:
       requests:
         cpu: 250m
-        memory: 250m
+        memory: 250Mi
       limits:
-        cpu: 250m
-        memory: 500m
+        cpu: 500m
+        memory: 500Mi
 
 kubeEtcd:
   enabled: false
