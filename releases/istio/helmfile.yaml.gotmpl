@@ -1,0 +1,62 @@
+---
+bases:
+  - ../../bases/helmDefaults.yaml
+  - ../../bases/environments.yaml.gotmpl
+  - ../../bases/apiVersions.yaml
+
+---
+repositories:
+  - name: istio
+    url: https://istio-release.storage.googleapis.com/charts
+
+releases:
+  - name: istio-base
+    chart: istio/base
+    namespace: istio-system
+    version: {{ .Values | get "istio.chart_version" nil }}
+    installed: {{ .Values | get "istio.installed" false }}
+    labels:
+      tier: inf
+
+  - name: istiod
+    chart: istio/istiod
+    namespace: istio-system
+    version: {{ .Values | get "istio.chart_version" nil }}
+    installed: {{ .Values | get "istio.installed" false }}
+    needs:
+      - istio-system/istio-base
+    labels:
+      tier: inf
+    values:
+      - values-istiod.yaml.gotmpl
+
+  - name: istio-cni
+    chart: istio/cni
+    namespace: istio-system
+    version: {{ .Values | get "istio.chart_version" nil }}
+    installed: {{ .Values | get "istio.installed" false }}
+    needs:
+      - istio-system/istiod
+    labels:
+      tier: inf
+    values:
+      - values-cni.yaml.gotmpl
+
+  - name: ztunnel
+    chart: istio/ztunnel
+    namespace: istio-system
+    version: {{ .Values | get "istio.chart_version" nil }}
+    installed: {{ .Values | get "istio.installed" false }}
+    needs:
+      - istio-system/istio-cni
+    labels:
+      tier: inf
+
+  - name: istio-policies
+    chart: ./charts/istio-policies
+    namespace: istio-system
+    installed: {{ .Values | get "istio.installed" false }}
+    needs:
+      - istio-system/istiod
+    labels:
+      tier: inf
