@@ -1,0 +1,19 @@
+{{- range $rbac := .Values.rbac }}
+{{- if $rbac.clusterRoleBinding }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ $rbac.clusterRoleBinding.name }}
+  labels:
+    app.kubernetes.io/managed-by: rbac
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{ if $rbac.clusterRoleBinding.roleRef }}{{ $rbac.clusterRoleBinding.roleRef }}{{ else }}{{ $rbac.clusterRole.name }}{{ end }}
+subjects:
+  - kind: ServiceAccount
+    name: {{ $rbac.serviceAccount.name }}
+    namespace: {{ $.Release.Namespace }}
+{{- end }}
+{{- end }}

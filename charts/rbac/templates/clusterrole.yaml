@@ -1,0 +1,13 @@
+{{- range $rbac := .Values.rbac }}
+{{- if $rbac.clusterRole }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ $rbac.clusterRole.name }}
+  labels:
+    app.kubernetes.io/managed-by: rbac
+rules:
+  {{- toYaml $rbac.clusterRole.rules | nindent 2 }}
+{{- end }}
+{{- end }}

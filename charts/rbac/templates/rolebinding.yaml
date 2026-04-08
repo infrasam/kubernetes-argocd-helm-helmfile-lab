@@ -1,0 +1,20 @@
+{{- range $rbac := .Values.rbac }}
+{{- if $rbac.roleBinding }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: {{ $rbac.roleBinding.name }}
+  namespace: {{ $.Release.Namespace }}
+  labels:
+    app.kubernetes.io/managed-by: rbac
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: {{ if $rbac.roleBinding.roleRef }}{{ $rbac.roleBinding.roleRef }}{{ else }}{{ $rbac.role.name }}{{ end }}
+subjects:
+  - kind: ServiceAccount
+    name: {{ $rbac.serviceAccount.name }}
+    namespace: {{ $.Release.Namespace }}
+{{- end }}
+{{- end }}

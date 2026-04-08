@@ -1,0 +1,14 @@
+{{- range $rbac := .Values.rbac }}
+{{- if $rbac.role }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: {{ $rbac.role.name }}
+  namespace: {{ $.Release.Namespace }}
+  labels:
+    app.kubernetes.io/managed-by: rbac
+rules:
+  {{- toYaml $rbac.role.rules | nindent 2 }}
+{{- end }}
+{{- end }}
