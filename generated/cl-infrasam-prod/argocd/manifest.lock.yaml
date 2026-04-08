@@ -27317,7 +27317,7 @@ spec:
 apiVersion: argoproj.io/v1alpha1
 kind: AppProject
 metadata:
-  name: cl-infrasam-prod
+  name: 0
   namespace: argocd
 spec:
   description: project for cl-infrasam-prod
@@ -27334,7 +27334,7 @@ spec:
 apiVersion: argoproj.io/v1alpha1
 kind: AppProject
 metadata:
-  name: cl-infrasam-test
+  name: 1
   namespace: argocd
 spec:
   description: project for cl-infrasam-test
