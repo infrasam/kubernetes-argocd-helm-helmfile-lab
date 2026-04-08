@@ -45,7 +45,7 @@ metadata:
     "app.kubernetes.io/managed-by": "Helm"
     "app.kubernetes.io/instance": "jenkins"
     "app.kubernetes.io/component": "jenkins-controller"
-    "helm.sh/chart": "jenkins-5.9.9"
+    "helm.sh/chart": "jenkins-5.9.12"
 ---
 # Source: jenkins/templates/config.yaml
 apiVersion: v1
@@ -59,7 +59,7 @@ metadata:
     "app.kubernetes.io/managed-by": "Helm"
     "app.kubernetes.io/instance": "jenkins"
     "app.kubernetes.io/component": "jenkins-controller"
-    "helm.sh/chart": "jenkins-5.9.9"
+    "helm.sh/chart": "jenkins-5.9.12"
 data:
   apply_config.sh: |-
     set -e
@@ -84,8 +84,8 @@ data:
   plugins.txt: |-
     kubernetes:4423.vb_59f230b_ce53
     workflow-aggregator:608.v67378e9d3db_1
-    git:5.10.0
-    configuration-as-code:2053.vb_0da_47381a_25
+    git:5.10.1
+    configuration-as-code:2061.vc08919f7fc37
     job-dsl:1.89
     pipeline-utility-steps:2.17.0
 ---
@@ -100,7 +100,7 @@ metadata:
     "app.kubernetes.io/managed-by": "Helm"
     "app.kubernetes.io/instance": "jenkins"
     "app.kubernetes.io/component": "jenkins-controller"
-    "helm.sh/chart": "jenkins-5.9.9"
+    "helm.sh/chart": "jenkins-5.9.12"
     jenkins-jenkins-config: "true"
 data:
   credentials.yaml: |-
@@ -126,7 +126,7 @@ metadata:
     "app.kubernetes.io/managed-by": "Helm"
     "app.kubernetes.io/instance": "jenkins"
     "app.kubernetes.io/component": "jenkins-controller"
-    "helm.sh/chart": "jenkins-5.9.9"
+    "helm.sh/chart": "jenkins-5.9.12"
     jenkins-jenkins-config: "true"
 data:
   jobs.yaml: |-
@@ -164,7 +164,7 @@ metadata:
     "app.kubernetes.io/managed-by": "Helm"
     "app.kubernetes.io/instance": "jenkins"
     "app.kubernetes.io/component": "jenkins-controller"
-    "helm.sh/chart": "jenkins-5.9.9"
+    "helm.sh/chart": "jenkins-5.9.12"
     jenkins-jenkins-config: "true"
 data:
   jcasc-default-config.yaml: |-
@@ -211,7 +211,7 @@ data:
           templates:
             - name: "default"
               namespace: "jenkins"
-              id: fa149702743ec476c48bcca029b649d6a4746985e45553ab0cf3bb3194a55520
+              id: c6a7bf7d6b700ed9ccb523347e4d3d6692ad129bb3be0291d6ec007e102e6951
               containers:
               - name: "jnlp"
                 alwaysPullImage: false
@@ -220,7 +220,7 @@ data:
                   - envVar:
                       key: "JENKINS_URL"
                       value: "http://jenkins.jenkins.svc.cluster.local:8080/"
-                image: "jenkins/inbound-agent:3355.v388858a_47b_33-16"
+                image: "jenkins/inbound-agent:3355.v388858a_47b_33-17"
                 privileged: "false"
                 resourceLimitCpu: 512m
                 resourceLimitMemory: 512Mi
@@ -262,7 +262,7 @@ metadata:
     "app.kubernetes.io/managed-by": "Helm"
     "app.kubernetes.io/instance": "jenkins"
     "app.kubernetes.io/component": "jenkins-controller"
-    "helm.sh/chart": "jenkins-5.9.9"
+    "helm.sh/chart": "jenkins-5.9.12"
 spec:
   accessModes:
     - "ReadWriteOnce"
@@ -282,7 +282,7 @@ metadata:
     "app.kubernetes.io/managed-by": "Helm"
     "app.kubernetes.io/instance": "jenkins"
     "app.kubernetes.io/component": "jenkins-controller"
-    "helm.sh/chart": "jenkins-5.9.9"
+    "helm.sh/chart": "jenkins-5.9.12"
 rules:
 - apiGroups: [""]
   resources: ["pods", "pods/exec", "pods/log", "persistentvolumeclaims", "events"]
@@ -304,7 +304,7 @@ metadata:
     "app.kubernetes.io/managed-by": "Helm"
     "app.kubernetes.io/instance": "jenkins"
     "app.kubernetes.io/component": "jenkins-controller"
-    "helm.sh/chart": "jenkins-5.9.9"
+    "helm.sh/chart": "jenkins-5.9.12"
 rules:
 - apiGroups: [""]
   resources: ["configmaps"]
@@ -323,7 +323,7 @@ metadata:
     "app.kubernetes.io/managed-by": "Helm"
     "app.kubernetes.io/instance": "jenkins"
     "app.kubernetes.io/component": "jenkins-controller"
-    "helm.sh/chart": "jenkins-5.9.9"
+    "helm.sh/chart": "jenkins-5.9.12"
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
@@ -344,7 +344,7 @@ metadata:
     "app.kubernetes.io/managed-by": "Helm"
     "app.kubernetes.io/instance": "jenkins"
     "app.kubernetes.io/component": "jenkins-controller"
-    "helm.sh/chart": "jenkins-5.9.9"
+    "helm.sh/chart": "jenkins-5.9.12"
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
@@ -365,7 +365,7 @@ metadata:
     "app.kubernetes.io/managed-by": "Helm"
     "app.kubernetes.io/instance": "jenkins"
     "app.kubernetes.io/component": "jenkins-controller"
-    "helm.sh/chart": "jenkins-5.9.9"
+    "helm.sh/chart": "jenkins-5.9.12"
 spec:
   ports:
     - port: 50000
@@ -387,7 +387,7 @@ metadata:
     "app.kubernetes.io/managed-by": "Helm"
     "app.kubernetes.io/instance": "jenkins"
     "app.kubernetes.io/component": "jenkins-controller"
-    "helm.sh/chart": "jenkins-5.9.9"
+    "helm.sh/chart": "jenkins-5.9.12"
 spec:
   ports:
     - port: 8080
@@ -409,7 +409,7 @@ metadata:
     "app.kubernetes.io/managed-by": "Helm"
     "app.kubernetes.io/instance": "jenkins"
     "app.kubernetes.io/component": "jenkins-controller"
-    "helm.sh/chart": "jenkins-5.9.9"
+    "helm.sh/chart": "jenkins-5.9.12"
 spec:
   serviceName: jenkins
   replicas: 1
@@ -424,9 +424,9 @@ spec:
         "app.kubernetes.io/managed-by": "Helm"
         "app.kubernetes.io/instance": "jenkins"
         "app.kubernetes.io/component": "jenkins-controller"
-        "helm.sh/chart": "jenkins-5.9.9"
+        "helm.sh/chart": "jenkins-5.9.12"
       annotations:
-        checksum/config: 81b3d3b68441956f0b533e47b8f3b2a09ea07badcedea063235b7181291e5ef0
+        checksum/config: a2f613153ce095ba237137fcda55388cf2be655513c47752456c4e242ef8afbf
     spec:
       enableServiceLinks: false
       securityContext:
@@ -669,7 +669,7 @@ metadata:
     "app.kubernetes.io/managed-by": "Helm"
     "app.kubernetes.io/instance": "jenkins"
     "app.kubernetes.io/component": "jenkins-controller"
-    "helm.sh/chart": "jenkins-5.9.9"
+    "helm.sh/chart": "jenkins-5.9.12"
   annotations:
     cert-manager.io/cluster-issuer: cloudflare
     ingress.kubernetes.io/force-ssl-redirect: "true"
