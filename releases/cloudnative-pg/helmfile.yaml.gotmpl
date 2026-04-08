@@ -1,0 +1,22 @@
+---
+bases:
+  - ../../bases/helmDefaults.yaml
+  - ../../bases/environments.yaml.gotmpl
+  - ../../bases/apiVersions.yaml
+
+---
+repositories:
+  - name: cnpg
+    url: https://cloudnative-pg.github.io/charts/
+
+releases:
+  - name: cloudnative-pg
+    chart: cnpg/cloudnative-pg
+    namespace: cloudnative-pg
+    createNamespace: true
+    version: {{ .Values | get "cloudnative-pg.chart_version" nil }}
+    installed: {{ .Values | get "cloudnative-pg.installed" false }}
+    labels:
+      tier: inf
+    values:
+      - values.yaml.gotmpl

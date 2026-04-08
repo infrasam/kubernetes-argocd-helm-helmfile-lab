@@ -1,0 +1,12 @@
+{{- range $name, $attrs := .Values.database }}
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: {{ $name | default (printf "%s-db" $.Release.Namespace) }}
+  namespace: {{ $.Release.Namespace }}
+spec:
+  instances: {{ $attrs.instances | default 3 }}
+  storage:
+    size: {{ $attrs.storage.size | default "5Gi" }}
+{{- end }}
