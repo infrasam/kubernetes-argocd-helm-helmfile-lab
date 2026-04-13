@@ -368,10 +368,12 @@ spec:
       serviceAccountName: "vault-agent-injector"
       
       securityContext:
-        runAsNonRoot: true
-        runAsGroup: 1000
-        runAsUser: 100
         fsGroup: 1000
+        runAsGroup: 1000
+        runAsNonRoot: true
+        runAsUser: 100
+        seccompProfile:
+          type: RuntimeDefault
       hostNetwork: false
       containers:
         - name: sidecar-injector
@@ -389,7 +391,11 @@ spec:
             allowPrivilegeEscalation: false
             capabilities:
               drop:
-                - ALL
+              - ALL
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            seccompProfile:
+              type: RuntimeDefault
           env:
             - name: AGENT_INJECT_LISTEN
               value: :8080
@@ -510,10 +516,12 @@ spec:
       serviceAccountName: vault
       
       securityContext:
-        runAsNonRoot: true
-        runAsGroup: 1000
-        runAsUser: 100
         fsGroup: 1000
+        runAsGroup: 1000
+        runAsNonRoot: true
+        runAsUser: 100
+        seccompProfile:
+          type: RuntimeDefault
       hostNetwork: false
       volumes:
         
@@ -551,6 +559,13 @@ spec:
    
           securityContext:
             allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            seccompProfile:
+              type: RuntimeDefault
           env:
             - name: HOST_IP
               valueFrom:

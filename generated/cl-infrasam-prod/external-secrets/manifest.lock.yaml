@@ -19382,6 +19382,10 @@ spec:
     spec:
       serviceAccountName: external-secrets-cert-controller
       automountServiceAccountToken: true
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
       hostNetwork: false
       containers:
         - name: cert-controller
@@ -19457,6 +19461,10 @@ spec:
     spec:
       serviceAccountName: external-secrets
       automountServiceAccountToken: true
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
       hostNetwork: false
       containers:
         - name: external-secrets
@@ -19521,6 +19529,10 @@ spec:
       hostNetwork: false
       serviceAccountName: external-secrets-webhook
       automountServiceAccountToken: true
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: webhook
           securityContext:

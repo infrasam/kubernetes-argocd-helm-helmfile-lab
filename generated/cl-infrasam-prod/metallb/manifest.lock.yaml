@@ -1956,6 +1956,12 @@ spec:
       serviceAccountName: metallb-speaker
       terminationGracePeriodSeconds: 0
       hostNetwork: true
+      securityContext:
+        fsGroup: 65534
+        runAsNonRoot: true
+        runAsUser: 65534
+        seccompProfile:
+          type: RuntimeDefault
       volumes:
         - name: memberlist
           secret:
@@ -2220,6 +2226,8 @@ spec:
         fsGroup: 65534
         runAsNonRoot: true
         runAsUser: 65534
+        seccompProfile:
+          type: RuntimeDefault
       containers:
       - name: controller
         image: quay.io/metallb/controller:v0.15.3
