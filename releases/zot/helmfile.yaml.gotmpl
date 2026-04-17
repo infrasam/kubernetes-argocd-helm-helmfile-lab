@@ -1,0 +1,33 @@
+---
+bases:
+  - ../../bases/helmDefaults.yaml
+  - ../../bases/environments.yaml.gotmpl
+  - ../../bases/apiVersions.yaml
+
+---
+repositories:
+  - name: project-zot
+    url: http://zotregistry.dev/helm-charts
+
+releases:
+  - name: zot
+    chart: project-zot/zot
+    namespace: zot
+    version: {{ .Values | get "zot.chart_version" nil }}
+    installed: {{ .Values | get "zot.installed" false }}
+    labels:
+      tier: inf
+    values:
+      - values.yaml.gotmpl
+    needs:
+      - zot/es-secrets
+
+  - name: es-secrets
+    chart: ../../charts/es-secrets
+    version: ~0.1
+    namespace: zot
+    installed: {{ and (.Values | get "zot.installed" false) (.Values | get "external-secrets.installed" false) }}
+    labels:
+      tier: inf
+    values:
+      - secret-values.yaml.gotmpl
