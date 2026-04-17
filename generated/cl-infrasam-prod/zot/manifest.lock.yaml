@@ -1,0 +1,191 @@
+---
+# Source: es-secrets/templates/externalsecret.yaml
+apiVersion: external-secrets.io/v1beta1
+kind: ExternalSecret
+metadata:
+  name: zot-htpasswd
+  namespace: zot
+  labels:
+    app.kubernetes.io/name: es-secrets
+    app.kubernetes.io/instance: es-secrets
+    app.kubernetes.io/managed-by: Helm
+    helm.sh/chart: es-secrets-0.1.0
+spec:
+  secretStoreRef:
+    kind: ClusterSecretStore
+    name: css-cl-infrasam-prod
+  refreshInterval: "1h"
+  target:
+    creationPolicy: Owner
+    deletionPolicy: Delete
+  data:
+    - remoteRef:
+        key: zot/htpasswd
+        property: htpasswd
+      secretKey: htpasswd
+
+---
+# Source: zot/templates/serviceaccount.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: zot
+  namespace: zot
+  labels:
+    helm.sh/chart: zot-0.1.104
+    app.kubernetes.io/name: zot
+    app.kubernetes.io/instance: zot
+    app.kubernetes.io/version: "v2.1.15"
+    app.kubernetes.io/managed-by: Helm
+---
+# Source: zot/templates/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: zot-config
+  namespace: zot
+data:
+  config.json: "{\n  \"storage\": {\n    \"rootDirectory\": \"/var/lib/registry\",\n    \"gc\": true,\n    \"gcDelay\": \"1h\",\n    \"gcInterval\": \"24h\"\n  },\n  \"http\": {\n    \"address\": \"0.0.0.0\",\n    \"port\": \"5000\",\n    \"auth\": {\n      \"htpasswd\": {\n        \"path\": \"/secret/htpasswd\"\n      }\n    },\n    \"accessControl\": {\n      \"repositories\": {\n        \"**\": {\n          \"policies\": [\n            {\n              \"users\": [\"ci\"],\n              \"actions\": [\"read\", \"create\", \"update\"]\n            }\n          ],\n          \"defaultPolicy\": [\"read\"]\n        }\n      },\n      \"adminPolicy\": {\n        \"users\": [\"admin\"],\n        \"actions\": [\"read\", \"create\", \"update\", \"delete\"]\n      }\n    }\n  },\n  \"log\": {\n    \"level\": \"info\"\n  },\n  \"extensions\": {\n    \"search\": {\n      \"enable\": true,\n      \"cve\": {\n        \"updateInterval\": \"24h\"\n      }\n    },\n    \"scrub\": {\n      \"enable\": true,\n      \"interval\": \"24h\"\n    },\n    \"metrics\": {\n      \"enable\": true,\n      \"prometheus\": {\n        \"path\": \"/metrics\"\n      }\n    }\n  }\n}"
+---
+# Source: zot/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: zot
+  namespace: zot
+  labels:
+    helm.sh/chart: zot-0.1.104
+    app.kubernetes.io/name: zot
+    app.kubernetes.io/instance: zot
+    app.kubernetes.io/version: "v2.1.15"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  type: ClusterIP
+  ports:
+    - port: 5000
+      targetPort: zot
+      protocol: TCP
+      name: zot
+  selector:
+    app.kubernetes.io/name: zot
+    app.kubernetes.io/instance: zot
+---
+# Source: zot/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: zot
+  namespace: zot
+  labels:
+    helm.sh/chart: zot-0.1.104
+    app.kubernetes.io/name: zot
+    app.kubernetes.io/instance: zot
+    app.kubernetes.io/version: "v2.1.15"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: zot
+      app.kubernetes.io/instance: zot
+  template:
+    metadata:
+      annotations:
+        checksum/config: 0c2a656ee5ac95e04c726262829f7960b8525b60e0d0ce25d82f5190c21d6da1
+      labels:
+        app.kubernetes.io/name: zot
+        app.kubernetes.io/instance: zot
+    spec:
+      serviceAccountName: zot
+      securityContext:
+        null
+      containers:
+        - name: zot
+          securityContext:
+            null
+          image: "ghcr.io/project-zot/zot:v2.1.15"
+          imagePullPolicy: IfNotPresent
+          env:
+            null
+          ports:
+            - name: zot
+              containerPort: 5000
+              protocol: TCP
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/registry
+            - mountPath: '/etc/zot'
+              name: zot-config
+            - mountPath: "/secret"
+              name: "zot-htpasswd"
+            - mountPath: /var/lib/registry
+              name: registry-data
+          livenessProbe:
+            initialDelaySeconds: 5
+            httpGet:
+              path: /livez
+              port: 5000
+              scheme: HTTP
+          readinessProbe:
+            initialDelaySeconds: 5
+            httpGet:
+              path: /readyz
+              port: 5000
+              scheme: HTTP
+          startupProbe:
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            failureThreshold: 3
+            httpGet:
+              path: /startupz
+              port: 5000
+              scheme: HTTP
+          resources:
+            null
+      volumes:
+        - name: data
+          emptyDir: {}
+        - name: zot-config
+          configMap:
+            name: zot-config
+        - name: zot-htpasswd
+          secret:
+            secretName: zot-htpasswd
+        - hostPath:
+            path: /var/lib/zot
+            type: DirectoryOrCreate
+          name: registry-data
+      dnsPolicy: ClusterFirst
+---
+# Source: zot/templates/ingress.yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: zot
+  namespace: zot
+  labels:
+    app: zot
+    release: zot
+  annotations:
+    cert-manager.io/cluster-issuer: cloudflare
+    ingress.kubernetes.io/force-ssl-redirect: "true"
+spec:
+  ingressClassName: "contour"
+  tls:
+    - hosts:
+      - registry.k8slabs.se
+      secretName: zot-tls
+  rules:
+  - host: registry.k8slabs.se
+    http:
+      paths:
+      - path: /
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: zot
+            port:
+              number: 5000
+
